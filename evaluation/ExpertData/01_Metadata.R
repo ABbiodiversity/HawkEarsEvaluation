@@ -1,5 +1,7 @@
 #This script wrangles recording-level metadata for hawkears evaluation.
 
+#TO DO: MAYBE SOME LANDCOVER OR TREE COVER?
+
 #PREAMBLE############
 
 #1. Load libraries----
@@ -94,7 +96,19 @@ for(i in 1:nrow(files)){
   
 }
 
+out <- do.call(rbind, out.list)
+
+write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_HardRain.csv"), row.names = FALSE)
+
 #PUT TOGETHER############
 
+out <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HardRain.csv"))
+
 covs <- eval %>% 
-  dplyr::select()
+  dplyr::select(latitude:tasks) %>% 
+  left_join(recs %>% 
+              mutate(recording_id = as.integer(recording_id))) %>% 
+  left_join(out) %>% 
+  unique()
+
+write.csv(covs, file.path(root, "Results", "ExpertData", "ExpertData_RecordingCovariates.csv"), row.names = FALSE)
