@@ -58,12 +58,14 @@ for(i in 1:nrow(files.bn)){
 #PUT IT TOGETHER#########
 
 #TO DO: FILTER OUT EXTRANEOUS TASKS FOR RECORDINGS PROCESSED TWICE####
+#TO DO: FIGURE OUT WHY BNET AND HE HAVE THE SAME # OF DETECTIONS....
 
 #1. Raw data----
 raw <- do.call(rbind, list.he) %>% 
   rbind(do.call(rbind, list.bn))
 
 write.csv(raw, file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"), row.names = FALSE)
+raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"))
 
 #2. Summarize to minute----
 min <- raw %>% 
@@ -73,29 +75,28 @@ min <- raw %>%
   summarize(score = max(score)) %>% 
   pivot_wider(names_from=classifier, values_from=score, values_fill = 0)
 
-#3. Put together with the expert data----
+#2. Randomly sample one task per recording----
+set.seed(1234)
+eval.use <- eval %>% 
+  dplyr::select(recording_url, observer_id) %>% 
+  unique() %>% 
+  group_by(recording_url) %>% 
+  sample_n(1) %>% 
+  ungroup()
+
+#3. Put everything together----
 dat <- eval %>% 
+  inner_join(eval.use) %>% 
   dplyr::select(recording_url, minute, tasks, observer_id, ALFL:YRWA) %>% 
   pivot_longer(ALFL:YRWA, values_to="count", names_to="species") %>% 
   dplyr::filter(count>0) %>% 
   left_join(covs %>% 
-              dplyr::select(recording_id, tasks, minute), multiple="all") %>% 
+              dplyr::select(recording_url, recording_id, tasks, minute), multiple="all") %>% 
   mutate(expert = 0) %>% 
   full_join(min %>% 
-              mutate(recording_id = as.integer(recording_id)))
+              mutate(recording_id = as.integer(recording_id))) %>% 
+  dplyr::select(observer_id, recording_id, minute, species, count, BirdNET, HawkEars) %>% 
+  arrange(recording_id, minute, species)
 
-#4. Randomly sample one task per recording----
-set.seed(123)
-use <- dat %>% 
-  dplyr::select(recording_id, observer_id) %>% 
-  unique() %>% 
-  group_by(recording_id) %>% 
-  summarize(n=n()) %>% 
-  ungroup()
   
-  group_by(recording_id) %>% 
-  sample_n(1) %>% 
-  ungroup() %>% 
-  left_join(dat, multiple="all")
-  
-write.csv(use, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"), row.names = FALSE)
+write.csv(dat, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"), row.names = FALSE)
