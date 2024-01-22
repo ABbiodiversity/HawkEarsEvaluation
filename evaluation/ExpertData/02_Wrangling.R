@@ -10,7 +10,10 @@ root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
 
 #3. Get evaluation dataset----
 eval <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData.csv")) %>% 
-  dplyr::filter(!is.na(recording_url))
+  dplyr::filter(!is.na(recording_url)) %>% 
+  separate(recording_url, into=c("f1", "f2", "f3", "f4", "recfile"), sep="/") %>% 
+  separate(recfile, into=c("recording_id", "filetype")) %>% 
+  dplyr::select(-c(f1, f2, f3, f4, filetype))
 
 #4. Get covariate dataset----
 covs <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_RecordingCovariates.csv"))
@@ -57,9 +60,6 @@ for(i in 1:nrow(files.bn)){
 
 #PUT IT TOGETHER#########
 
-#TO DO: FILTER OUT EXTRANEOUS TASKS FOR RECORDINGS PROCESSED TWICE####
-#TO DO: FIGURE OUT WHY BNET AND HE HAVE THE SAME # OF DETECTIONS....
-
 #1. Raw data----
 raw <- do.call(rbind, list.he) %>% 
   rbind(do.call(rbind, list.bn))
@@ -73,14 +73,14 @@ min <- raw %>%
          minute = ifelse(minute==0, 1, minute)) %>% 
   group_by(classifier, recording_id, minute, species) %>% 
   summarize(score = max(score)) %>% 
-  pivot_wider(names_from=classifier, values_from=score, values_fill = 0)
+  pivot_wider(names_from=classifier, values_from=score)
 
 #2. Randomly sample one task per recording----
 set.seed(1234)
 eval.use <- eval %>% 
-  dplyr::select(recording_url, observer_id) %>% 
+  dplyr::select(recording_id, observer_id) %>% 
   unique() %>% 
-  group_by(recording_url) %>% 
+  group_by(recording_id) %>% 
   sample_n(1) %>% 
   ungroup()
 
@@ -98,5 +98,4 @@ dat <- eval %>%
   dplyr::select(observer_id, recording_id, minute, species, count, BirdNET, HawkEars) %>% 
   arrange(recording_id, minute, species)
 
-  
 write.csv(dat, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"), row.names = FALSE)
