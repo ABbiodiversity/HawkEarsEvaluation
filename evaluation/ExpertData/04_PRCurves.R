@@ -12,9 +12,6 @@ root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
 det <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv")) %>% 
   mutate(detection = ifelse(is.na(count), 0, 1))
 
-#4. Get recording covariate dataset----
-covs <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_RecordingCovariates.csv"))
-
 #OVERALL PR CURVES##########
 
 #1. Set up loop----
@@ -57,6 +54,16 @@ for(i in 1:length(thresh)){
 ggplot(pr) + 
   geom_line(aes(x=p, y=r, colour=classifier), linewidth=2) +
   xlab("Precision") +
+  ylab("Recall")
+
+ggplot(pr) + 
+  geom_line(aes(x=thresh, y=p, colour=classifier), linewidth=2) +
+  xlab("Threshold") +
+  ylab("Precision")
+
+ggplot(pr) + 
+  geom_line(aes(x=thresh, y=r, colour=classifier), linewidth=2) +
+  xlab("Threshold") +
   ylab("Recall")
 
 #SPECIES PR CURVES##########
@@ -133,4 +140,12 @@ ggplot(pr.sp) +
   ylab("Precision") +
   facet_wrap(~classifier)
 
+#relationship with # detections----
+ggplot(pr.sp %>% 
+         dplyr::filter(thresh==0.8)) +
+  geom_point(aes(x=det.n, y=p, colour=species), show.legend=FALSE)
+
+ggplot(pr.sp %>% 
+         dplyr::filter(thresh==0.8)) +
+  geom_point(aes(x=det.n, y=r, colour=species), show.legend=FALSE)
 
