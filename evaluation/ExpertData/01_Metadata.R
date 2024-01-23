@@ -105,10 +105,11 @@ write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_HardRain.csv
 out <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HardRain.csv"))
 
 covs <- eval %>% 
-  dplyr::select(latitude:tasks) %>% 
-  left_join(recs %>% 
-              mutate(recording_id = as.integer(recording_id))) %>% 
-  left_join(out) %>% 
-  unique()
+  separate(recording_url, into=c("f1", "f2", "f3", "f4", "file"), sep="/", remove=FALSE) %>% 
+  separate(file, into=c("recording_id", "filetype")) %>% 
+  dplyr::select(latitude, longitude, project_name, location, recording_date, recording_url, recording_id, filetype) %>% 
+  mutate(recording_id = as.integer(recording_id)) %>% 
+  unique() %>% 
+  left_join(out, multiple="all")
 
 write.csv(covs, file.path(root, "Results", "ExpertData", "ExpertData_RecordingCovariates.csv"), row.names = FALSE)
