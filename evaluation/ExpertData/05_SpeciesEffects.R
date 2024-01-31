@@ -223,7 +223,8 @@ plot.m.p <- ggplot(dat %>% dplyr::filter(thresh %in% c(0.2, 0.4, 0.6, 0.8),
   ylab("Threshold") +
   scale_fill_discrete(name = "Migration type", labels=c("Long distance",
                                                           "Short distance",
-                                                          "Resident"))
+                                                          "Resident")) +
+  facet_wrap(~classifier)
 plot.m.p
 
 plot.m.r <- ggplot(dat %>% dplyr::filter(thresh %in% c(0.2, 0.4, 0.6, 0.8),
@@ -233,11 +234,12 @@ plot.m.r <- ggplot(dat %>% dplyr::filter(thresh %in% c(0.2, 0.4, 0.6, 0.8),
   ylab("Threshold") +
   scale_fill_discrete(name = "Migration type", labels=c("Long distance",
                                                         "Short distance",
-                                                        "Resident"))
+                                                        "Resident")) +
+  facet_wrap(~classifier)
 plot.m.r
 
 ggsave(grid.arrange(plot.m.p, plot.m.r, ncol=1), filename=file.path(root, "Figures", "ExpertData_MigrationType.jpeg"),
-       width = 10, height = 16)
+       width = 16, height = 16)
 
 ggplot(dat %>% dplyr::filter(thresh %in% c(0.2, 0.4, 0.6, 0.8))) +
   geom_boxplot(aes(x=factor(thresh), y=f, colour=MigType))
