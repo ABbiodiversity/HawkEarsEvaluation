@@ -18,7 +18,13 @@ eval <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData.csv")) %>%
          CAJA = ifelse(CAJA==0, GRAJ, CAJA)) %>% 
   dplyr::select(-GRAJ, -CHIK)
 
-#4. Get covariate dataset----
+#4. Get extra tags----
+extra <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_extra_tags.csv")) %>% 
+  mutate(count = 1,
+         observer_id = 99) %>% 
+  rename(recording_id=recording, species = code)
+
+#5. Get covariate dataset----
 covs <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_RecordingCovariates.csv"))
 
 #HAWKEARS##########
@@ -90,6 +96,7 @@ dat <- eval %>%
   dplyr::select(recording_id, minute, observer_id, ALFL:YRWA) %>% 
   pivot_longer(ALFL:YRWA, values_to="count", names_to="species") %>% 
   dplyr::filter(count>0) %>% 
+  rbind(extra) %>% 
   left_join(covs %>% 
               dplyr::select(recording_url, recording_id, minute), multiple="all") %>% 
   full_join(min) %>% 
