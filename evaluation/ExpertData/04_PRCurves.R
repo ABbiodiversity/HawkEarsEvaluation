@@ -142,7 +142,12 @@ for(i in 1:length(thresh)){
   
 }
 
-#5. Plot-----
+#5. Save----
+write.csv(pr.sp, file.path(root, "Results", "ExpertData", "ExpertData_PR_Species.csv"), row.names = FALSE)
+
+#6. Plot-----
+
+#performance
 ggplot(pr.sp) + 
   geom_line(aes(x=p, y=r, colour=species), linewidth=2, show.legend = FALSE) +
   xlab("Precision") +
@@ -170,10 +175,8 @@ ggplot(pr.sp) +
   ylab("Fscore") +
   facet_wrap(~classifier)
 
-#6. Save----
-write.csv(pr.sp, file.path(root, "Results", "ExpertData", "ExpertData_PR_Species.csv"), row.names = FALSE)
 
-#7. Relationship with # detections----
+#Relationship with # detections
 ggplot(pr.sp %>% 
          dplyr::filter(thresh==0.8)) +
   geom_point(aes(x=det.n, y=p, colour=species), show.legend=FALSE)
