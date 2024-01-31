@@ -4,6 +4,7 @@
 
 #1. Load libraries----
 library(tidyverse)
+library(gridExtra)
 
 #2. Set root file path---
 root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
@@ -54,29 +55,34 @@ for(i in 1:length(thresh)){
   
 }
 
-#5. Plot-----
-ggplot(pr) + 
+#5. Save----
+write.csv(pr, file.path(root, "Results", "ExpertData", "ExpertData_PR_Total.csv"), row.names = FALSE)
+
+#6. Plot-----
+plot.pr <- ggplot(pr) + 
   geom_line(aes(x=p, y=r, colour=classifier), linewidth=2) +
   xlab("Precision") +
   ylab("Recall")
 
-ggplot(pr) + 
+plot.p <- ggplot(pr) + 
   geom_line(aes(x=thresh, y=p, colour=classifier), linewidth=2) +
   xlab("Threshold") +
   ylab("Precision")
 
-ggplot(pr) + 
+plot.r <- ggplot(pr) + 
   geom_line(aes(x=thresh, y=r, colour=classifier), linewidth=2) +
   xlab("Threshold") +
   ylab("Recall")
 
-ggplot(pr) + 
+plot.f <- ggplot(pr) + 
   geom_line(aes(x=thresh, y=f, colour=classifier), linewidth=2) +
   xlab("Threshold") +
   ylab("Fscore")
 
-#6. Save----
-write.csv(pr, file.path(root, "Results", "ExpertData", "ExpertData_PR_Total.csv"), row.names = FALSE)
+ggsave(grid.arrange(plot.p, plot.r, plot.pr, plot.f, ncol=2, nrow=2),
+       width = 12, height = 8, units ="in",
+       filename = file.path(root, "Figures", "ExpertData_Total.jpeg"))
+
 
 #SPECIES PR CURVES##########
 
