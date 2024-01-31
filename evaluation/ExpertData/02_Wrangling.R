@@ -1,7 +1,5 @@
 #This script wrangles raw hawkears and birdnet detections for the expert dataset.
 
-#TO DO: FIX GRAJ/CAJA
-
 #PREAMBLE############
 
 #1. Load libraries----
@@ -15,7 +13,10 @@ eval <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData.csv")) %>%
   dplyr::filter(!is.na(recording_url)) %>% 
   separate(recording_url, into=c("f1", "f2", "f3", "f4", "recfile"), sep="/") %>% 
   separate(recfile, into=c("recording_id", "filetype")) %>% 
-  dplyr::select(-c(f1, f2, f3, f4, filetype))
+  dplyr::select(-c(f1, f2, f3, f4, filetype)) %>% 
+  mutate(recording_id = as.integer(recording_id),
+         CAJA = ifelse(CAJA==0, GRAJ, CAJA)) %>% 
+  dplyr::select(-GRAJ)
 
 #4. Get covariate dataset----
 covs <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_RecordingCovariates.csv"))
@@ -69,24 +70,30 @@ raw <- do.call(rbind, list.he) %>%
 write.csv(raw, file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"), row.names = FALSE)
 raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"))
 
-#2. Assign to minute---
+#2. Get inventory of minutes of expert data----
+dur <- eval %>% 
+  dplyr::select(recording_id, minute) %>% 
+  unique()
+
+#2. Summarize to minute----
 min <- raw %>% 
-  mutate(minute = ceiling((start+0.001)/60),
-         ambiguous = ifelse(minute!=ceiling((end+0.001)/60), 1, 0))
+  mutate(minute = ceiling(start/60),
+         minute = ifelse(minute==0, 1, minute)) %>% 
+  group_by(classifier, recording_id, minute, species) %>% 
+  summarize(score = max(score)) %>% 
+  pivot_wider(names_from=classifier, values_from=score) %>% 
+  dplyr::filter(minute <=3) %>% 
+  mutate(recording_id=as.integer(recording_id))
 
 #3. Put everything together----
-dat <- eval %>% 
-  mutate(recording_id =as.integer(recording_id)) %>% 
+dat <- eval %>%
   dplyr::select(recording_id, minute, observer_id, ALFL:YRWA) %>% 
   pivot_longer(ALFL:YRWA, values_to="count", names_to="species") %>% 
   dplyr::filter(count>0) %>% 
   left_join(covs %>% 
               dplyr::select(recording_url, recording_id, minute), multiple="all") %>% 
-  mutate(expert = 0) %>% 
-  full_join(min %>% 
-              mutate(recording_id = as.integer(recording_id)),
-            multiple = "all") %>% 
-  mutate(fn = ifelse(is.na(score), 1, 0),
-         tp = ifelse(is.na(expert), 0, 1))
+  full_join(min) %>% 
+  dplyr::select(observer_id, recording_id, minute, species, count, BirdNET, HawkEars) %>% 
+  inner_join(dur)
 
-write.csv(dat, file.path(root, "Results", "ExpertData", "ExpertData_ByDetection.csv"), row.names = FALSE)
+write.csv(dat, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"), row.names = FALSE)
