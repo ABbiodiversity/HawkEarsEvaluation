@@ -15,7 +15,7 @@ det <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.cs
 #OVERALL PR CURVES##########
 
 #1. Set up loop----
-thresh <- seq(0, 0.99, 0.01)
+thresh <- seq(0.00, 0.99, 0.01)
 
 #2. Calculate total number of detections for recall calculation----
 det.n <- nrow(dplyr::filter(det, !is.na(count)))
@@ -25,25 +25,29 @@ for(i in 1:length(thresh)){
   
   #2. Wrangle BirdNET----
   pr.bn <- det %>% 
-    dplyr::filter(BirdNET > thresh[i]) %>% 
-    mutate(tp = ifelse(!is.na(count), 1, 0),
-           fp = ifelse(is.na(count), 1, 0),
+    mutate(BirdNET = ifelse(BirdNET <= thresh[i], NA, BirdNET)) %>% 
+    dplyr::filter(!(is.na(BirdNET) & is.na(count))) %>% 
+    mutate(tp = ifelse(!is.na(count) & !is.na(BirdNET), 1, 0),
+           fp = ifelse(is.na(count) & !is.na(BirdNET), 1, 0),
            fn = ifelse(!is.na(count) & is.na(BirdNET), 1, 0)) %>% 
     summarize(p = sum(tp)/(sum(tp) + sum(fp)),
               r = sum(tp)/det.n) %>% 
     mutate(classifier = "BirdNET",
-           thresh = thresh[i])
+           thresh = thresh[i],
+           f = 2*(p*r)/(p+r))
   
   #3. Wrangle HawkEars----
   pr.he <- det %>% 
-    dplyr::filter(HawkEars > thresh[i]) %>% 
-    mutate(tp = ifelse(!is.na(count), 1, 0),
-           fp = ifelse(is.na(count), 1, 0),
-           fn = ifelse(!is.na(count) & is.na(BirdNET), 1, 0)) %>% 
+    mutate(HawkEars = ifelse(HawkEars <= thresh[i], NA, HawkEars)) %>% 
+    dplyr::filter(!(is.na(HawkEars) & is.na(count))) %>% 
+    mutate(tp = ifelse(!is.na(count) & !is.na(HawkEars), 1, 0),
+           fp = ifelse(is.na(count) & !is.na(HawkEars), 1, 0),
+           fn = ifelse(!is.na(count) & is.na(HawkEars), 1, 0)) %>% 
     summarize(p = sum(tp)/(sum(tp) + sum(fp)),
               r = sum(tp)/det.n) %>% 
     mutate(classifier = "HawkEars",
-           thresh = thresh[i])
+           thresh = thresh[i],
+           f = 2*(p*r)/(p+r))
   
   #4. Put together----
   pr <- rbind(pr, pr.bn, pr.he)
@@ -66,6 +70,11 @@ ggplot(pr) +
   xlab("Threshold") +
   ylab("Recall")
 
+ggplot(pr) + 
+  geom_line(aes(x=thresh, y=f, colour=classifier), linewidth=2) +
+  xlab("Threshold") +
+  ylab("Fscore")
+
 #SPECIES PR CURVES##########
 
 #1. Set up loop----
@@ -83,16 +92,17 @@ for(i in 1:length(thresh)){
   
   #2. Wrangle BirdNET----
   pr.bn <- det %>% 
-    dplyr::filter(BirdNET > thresh[i]) %>% 
-    mutate(tp = ifelse(!is.na(count), 1, 0),
-           fp = ifelse(is.na(count), 1, 0),
+    mutate(BirdNET = ifelse(BirdNET <= thresh[i], NA, BirdNET)) %>% 
+    dplyr::filter(!(is.na(BirdNET) & is.na(count))) %>% 
+    mutate(tp = ifelse(!is.na(count) & !is.na(BirdNET), 1, 0),
+           fp = ifelse(is.na(count) & !is.na(BirdNET), 1, 0),
            fn = ifelse(!is.na(count) & is.na(BirdNET), 1, 0)) %>% 
     group_by(species) %>% 
     summarize(tp = sum(tp),
               fp = sum(fp),
               fn = sum(fn)) %>% 
     ungroup() %>% 
-    left_join(det.n.sp) %>% 
+    left_join(det.n.sp, by="species") %>% 
     mutate(p = tp/(tp + fp),
            r = tp/det.n,
            classifier = "BirdNET",
@@ -100,16 +110,17 @@ for(i in 1:length(thresh)){
   
   #3. Wrangle HawkEars----
   pr.he <- det %>% 
-    dplyr::filter(HawkEars > thresh[i]) %>% 
-    mutate(tp = ifelse(!is.na(count), 1, 0),
-           fp = ifelse(is.na(count), 1, 0),
-           fn = ifelse(!is.na(count) & is.na(BirdNET), 1, 0)) %>% 
+    mutate(HawkEars = ifelse(HawkEars <= thresh[i], NA, HawkEars)) %>% 
+    dplyr::filter(!(is.na(HawkEars) & is.na(count))) %>% 
+    mutate(tp = ifelse(!is.na(count) & !is.na(HawkEars), 1, 0),
+           fp = ifelse(is.na(count) & !is.na(HawkEars), 1, 0),
+           fn = ifelse(!is.na(count) & is.na(HawkEars), 1, 0)) %>% 
     group_by(species) %>% 
     summarize(tp = sum(tp),
               fp = sum(fp),
               fn = sum(fn)) %>% 
     ungroup() %>% 
-    left_join(det.n.sp) %>% 
+    left_join(det.n.sp, by="species") %>% 
     mutate(p = tp/(tp + fp),
            r = tp/det.n,
            classifier = "HawkEars",
@@ -137,7 +148,7 @@ ggplot(pr.sp) +
 ggplot(pr.sp) +
   geom_line(aes(x=thresh, y=r, colour=species), show.legend = FALSE) +
   xlab("Threshold") +
-  ylab("Precision") +
+  ylab("Recall") +
   facet_wrap(~classifier)
 
 #relationship with # detections----
@@ -148,4 +159,3 @@ ggplot(pr.sp %>%
 ggplot(pr.sp %>% 
          dplyr::filter(thresh==0.8)) +
   geom_point(aes(x=det.n, y=r, colour=species), show.legend=FALSE)
-
