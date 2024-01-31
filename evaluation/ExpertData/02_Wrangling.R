@@ -1,5 +1,7 @@
 #This script wrangles raw hawkears and birdnet detections for the expert dataset.
 
+#TO DO: FIX GRAJ/CAJA
+
 #PREAMBLE############
 
 #1. Load libraries----
@@ -67,35 +69,24 @@ raw <- do.call(rbind, list.he) %>%
 write.csv(raw, file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"), row.names = FALSE)
 raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"))
 
-#2. Summarize to minute----
+#2. Assign to minute---
 min <- raw %>% 
-  mutate(minute = ceiling(start/60),
-         minute = ifelse(minute==0, 1, minute)) %>% 
-  group_by(classifier, recording_id, minute, species) %>% 
-  summarize(score = max(score)) %>% 
-  pivot_wider(names_from=classifier, values_from=score)
-
-#2. Randomly sample one task per recording----
-set.seed(1234)
-eval.use <- eval %>% 
-  dplyr::select(recording_id, observer_id) %>% 
-  unique() %>% 
-  group_by(recording_id) %>% 
-  sample_n(1) %>% 
-  ungroup()
+  mutate(minute = ceiling((start+0.001)/60),
+         ambiguous = ifelse(minute!=ceiling((end+0.001)/60), 1, 0))
 
 #3. Put everything together----
 dat <- eval %>% 
-  inner_join(eval.use) %>% 
-  dplyr::select(recording_url, minute, tasks, observer_id, ALFL:YRWA) %>% 
+  mutate(recording_id =as.integer(recording_id)) %>% 
+  dplyr::select(recording_id, minute, observer_id, ALFL:YRWA) %>% 
   pivot_longer(ALFL:YRWA, values_to="count", names_to="species") %>% 
   dplyr::filter(count>0) %>% 
   left_join(covs %>% 
-              dplyr::select(recording_url, recording_id, tasks, minute), multiple="all") %>% 
+              dplyr::select(recording_url, recording_id, minute), multiple="all") %>% 
   mutate(expert = 0) %>% 
   full_join(min %>% 
-              mutate(recording_id = as.integer(recording_id))) %>% 
-  dplyr::select(observer_id, recording_id, minute, species, count, BirdNET, HawkEars) %>% 
-  arrange(recording_id, minute, species)
+              mutate(recording_id = as.integer(recording_id)),
+            multiple = "all") %>% 
+  mutate(fn = ifelse(is.na(score), 1, 0),
+         tp = ifelse(is.na(expert), 0, 1))
 
-write.csv(dat, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"), row.names = FALSE)
+write.csv(dat, file.path(root, "Results", "ExpertData", "ExpertData_ByDetection.csv"), row.names = FALSE)
