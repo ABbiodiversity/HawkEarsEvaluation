@@ -5,7 +5,7 @@ library(readxl)
 #PREAMBLE############
 
 #1. login----
-config <- "script/login.R"
+config <- "WTlogin.R"
 source(config)
 wt_auth()
 
@@ -62,7 +62,7 @@ raw.wide <- raw.rec %>%
          minute = ifelse(minute==0, 1, minute),
          abundance = as.numeric(abundance),
          abundance = ifelse(is.na(abundance), 1, abundance)) %>%
-  dplyr::select(recording_url, project_name, location, latitude, longitude, observer_id, recording_date, minute, tasks, species_code, abundance) %>%
+  dplyr::select(recording_url, project_name, location, latitude, longitude, observer_id, duration, recording_date, minute, species_code, abundance) %>%
   pivot_wider(names_from="species_code", values_from="abundance", names_sort=TRUE, values_fn = ~sum(.x), values_fill=0) %>%
   arrange(project_name, location, recording_date, minute) %>%
   mutate(id = row_number()) %>%
@@ -109,7 +109,7 @@ expert.use <- raw.wide %>%
 summary(expert.use)
 
 #10. Save out----
-write.csv(expert.use, file.path(root, "Data", "Evaluation", "ExpertData.csv"), row.names=FALSE)
+#write.csv(expert.use, file.path(root, "Data", "Evaluation", "ExpertData.csv"), row.names=FALSE)
 
 #LINK EXPERT CORRECTIONS TO TASK ID####
 
