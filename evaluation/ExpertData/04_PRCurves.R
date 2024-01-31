@@ -75,6 +75,9 @@ ggplot(pr) +
   xlab("Threshold") +
   ylab("Fscore")
 
+#6. Save----
+write.csv(pr, file.path(root, "Results", "ExpertData", "ExpertData_PR_Total.csv"), row.names = FALSE)
+
 #SPECIES PR CURVES##########
 
 #1. Set up loop----
@@ -106,7 +109,8 @@ for(i in 1:length(thresh)){
     mutate(p = tp/(tp + fp),
            r = tp/det.n,
            classifier = "BirdNET",
-           thresh = thresh[i])
+           thresh = thresh[i],
+           f = 2*(p*r)/(p+r))
   
   #3. Wrangle HawkEars----
   pr.he <- det %>% 
@@ -124,8 +128,8 @@ for(i in 1:length(thresh)){
     mutate(p = tp/(tp + fp),
            r = tp/det.n,
            classifier = "HawkEars",
-           thresh = thresh[i])
-  
+           thresh = thresh[i],
+           f = 2*(p*r)/(p+r))
   
   #4. Put together----
   pr.sp <- rbind(pr.sp, pr.bn, pr.he)
@@ -141,17 +145,29 @@ ggplot(pr.sp) +
 
 ggplot(pr.sp) +
   geom_line(aes(x=thresh, y=p, colour=species), show.legend = FALSE) +
+  geom_smooth(aes(x=thresh, y=p), show.legend = FALSE) +
   xlab("Threshold") +
   ylab("Precision") +
   facet_wrap(~classifier)
 
 ggplot(pr.sp) +
   geom_line(aes(x=thresh, y=r, colour=species), show.legend = FALSE) +
+  geom_smooth(aes(x=thresh, y=r), show.legend = FALSE) +
   xlab("Threshold") +
   ylab("Recall") +
   facet_wrap(~classifier)
 
-#relationship with # detections----
+ggplot(pr.sp) +
+  geom_line(aes(x=thresh, y=f, colour=species), show.legend = FALSE) +
+  geom_smooth(aes(x=thresh, y=f), show.legend = FALSE) +
+  xlab("Threshold") +
+  ylab("Fscore") +
+  facet_wrap(~classifier)
+
+#6. Save----
+write.csv(pr.sp, file.path(root, "Results", "ExpertData", "ExpertData_PR_Species.csv"), row.names = FALSE)
+
+#7. Relationship with # detections----
 ggplot(pr.sp %>% 
          dplyr::filter(thresh==0.8)) +
   geom_point(aes(x=det.n, y=p, colour=species), show.legend=FALSE)
