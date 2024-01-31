@@ -16,7 +16,7 @@ eval <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData.csv")) %>%
   dplyr::select(-c(f1, f2, f3, f4, filetype)) %>% 
   mutate(recording_id = as.integer(recording_id),
          CAJA = ifelse(CAJA==0, GRAJ, CAJA)) %>% 
-  dplyr::select(-GRAJ)
+  dplyr::select(-GRAJ, -CHIK)
 
 #4. Get covariate dataset----
 covs <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_RecordingCovariates.csv"))
