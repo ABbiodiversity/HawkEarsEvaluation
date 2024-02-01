@@ -131,31 +131,37 @@ out.list <- list()
 for(i in 1:nrow(loop)){
   
   #4. Read in wav----
-  wav.i <- readWave(loop$path[i], from = loop$minute[i]-1, to=loop$minute[i], units="minutes")
+  wav.i <- try(readWave(loop$path[i], from = loop$minute[i]-1, to=loop$minute[i], units="minutes"))
   
-  #5. Measure-----
-  aci.i <- acoustic_complexity(wav.i)
-  adi.i <- acoustic_diversity(wav.i)
-  aei.i <- acoustic_evenness(wav.i)
-  
-  #6. Wrangle----
-  out.list[[i]] <- data.frame(aci.l = aci.i$AciTotAll_left,
-                              aci.r = aci.i$AciTotAll_right,
-                              adi.l = adi.i$adi_left,
-                              adi.r = adi.i$adi_right,
-                              aei.l = aei.i$aei_left,
-                              aei.r = aei.i$aei_right) %>% 
-    mutate(minute = loop$minute[i],
-           recording_id = loop$recording_id[i],
-           aci = mean(aci.l, aci.r),
-           adi = mean(adi.l, adi.r),
-           aei = mean(aei.l, aei.r))
-  
+  if(class(wav.i)[1]=="Wave"){
+   
+    #5. Measure-----
+    aci.i <- acoustic_complexity(wav.i)
+    adi.i <- acoustic_diversity(wav.i)
+    aei.i <- acoustic_evenness(wav.i)
+    
+    #6. Wrangle----
+    out.list[[i]] <- data.frame(aci.l = aci.i$AciTotAll_left,
+                                aci.r = aci.i$AciTotAll_right,
+                                adi.l = adi.i$adi_left,
+                                adi.r = adi.i$adi_right,
+                                aei.l = aei.i$aei_left,
+                                aei.r = aei.i$aei_right) %>% 
+      mutate(minute = loop$minute[i],
+             recording_id = loop$recording_id[i])
+     
+  }
+
   print(paste0("Finished recording minute ", i, " of ", nrow(loop)))
   
 }
 
-out <- do.call(rbind, out.list)
+out <- do.call(rbind, out.list) %>% 
+  rowwise() %>% 
+  mutate(aci = ifelse(is.na(aci.r), aci.l, mean(aci.l, aci.r, na.rm=TRUE)),
+         adi = ifelse(is.na(adi.r), adi.l, mean(adi.l, adi.r, na.rm=TRUE)),
+         aei = ifelse(is.na(aei.r), aei.l, mean(aei.l, aei.r, na.rm=TRUE))) %>% 
+  ungroup()
 
 #7. Save-----
 write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_AcousticIndices.csv"), row.names = FALSE)
