@@ -32,7 +32,9 @@ for(i in 1:length(thresh)){
            fp = ifelse(is.na(count) & !is.na(BirdNET), 1, 0),
            fn = ifelse(!is.na(count) & is.na(BirdNET), 1, 0)) %>% 
     summarize(p = sum(tp)/(sum(tp) + sum(fp)),
-              r = sum(tp)/det.n) %>% 
+              r = sum(tp)/det.n,
+              tp = sum(tp),
+              fp = sum(fp)) %>% 
     mutate(classifier = "BirdNET",
            thresh = thresh[i],
            f = 2*(p*r)/(p+r))
@@ -45,7 +47,9 @@ for(i in 1:length(thresh)){
            fp = ifelse(is.na(count) & !is.na(HawkEars), 1, 0),
            fn = ifelse(!is.na(count) & is.na(HawkEars), 1, 0)) %>% 
     summarize(p = sum(tp)/(sum(tp) + sum(fp)),
-              r = sum(tp)/det.n) %>% 
+              r = sum(tp)/det.n,
+              tp = sum(tp),
+              fp = sum(fp)) %>% 
     mutate(classifier = "HawkEars",
            thresh = thresh[i],
            f = 2*(p*r)/(p+r))
