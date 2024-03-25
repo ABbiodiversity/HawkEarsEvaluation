@@ -1,11 +1,12 @@
 library(wildRtrax)
 library(tidyverse)
 library(readxl)
+library(lubridate)
 
 #PREAMBLE############
 
 #1. login----
-config <- "script/login.R"
+config <- "WTlogin.R"
 source(config)
 wt_auth()
 
@@ -18,13 +19,13 @@ root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
 #4. Get dataframe with AWS urls in it----
 #This file is obtained with the getReports/DownloadClipView.R script in the recognizersandbox repo.
 
-load("G:/My Drive/ABMI/Projects/Recognizers/Data/clip_view_2023-12-15.Rdata")
+load("G:/My Drive/ABMI/Projects/Recognizers/Data/clip_view_2024-03-25.Rdata")
 
 #SINGLE SPECIES####
 
 #1. Data frame of target projects----
-sp <- data.frame(project_id=c(498, 669, 760, 777, 1157, 1238, 623, 787, 791, 2151, 1950, 680, 1321, 678),
-                 target=c("BTNW", "OVEN", "SWTH", "BTNW", "BADO", "SWTH", "OVEN", "OSFL", "BTNW", "YERA", "TEWA, WTSP", "BTNW", "RUGR", "Woodpeckers"))
+sp <- data.frame(project_id=c(498, 669, 760, 777, 1157, 1238, 623, 787, 791, 2151, 1950, 680, 1321, 678, 2418),
+                 target=c("BTNW", "OVEN", "SWTH", "BTNW", "BADO", "SWTH", "OVEN", "OSFL", "BTNW", "YERA", "TEWA, WTSP", "BTNW", "RUGR", "Woodpeckers", "COYE"))
 
 #2. Download all the data----
 dat.list <- list()
@@ -42,8 +43,8 @@ dat <- do.call(rbind, dat.list)
 dat_wide <- dat %>%
   wt_make_wide() %>%
   inner_join(raw %>%
-               rename(recording_date_time = date,
-                      organization = org) %>%
+               mutate(recording_date_time = ymd_hms(date)) %>% 
+               rename(organization = org) %>%
                dplyr::select(organization, project_id, location, recording_date_time, wildtrax_url, recording_url) %>%
                unique(),
              multiple="all") %>%
@@ -53,8 +54,8 @@ dat_wide <- dat %>%
 #4. Keep the detail----
 dat_all <- dat %>%
   inner_join(raw %>%
-               rename(recording_date_time = date,
-                      organization = org) %>%
+               mutate(recording_date_time = ymd_hms(date)) %>% 
+               rename(organization = org) %>%
                dplyr::select(organization, project_id, location, recording_date_time, wildtrax_url, recording_url) %>%
                unique(),
              multiple="all") %>%
