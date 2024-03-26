@@ -179,7 +179,6 @@ ggplot(pr.sp) +
   ylab("Fscore") +
   facet_wrap(~classifier)
 
-
 #Relationship with # detections
 ggplot(pr.sp %>% 
          dplyr::filter(thresh==0.8)) +
