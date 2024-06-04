@@ -65,8 +65,24 @@ ggplot(prf.maxf) +
 
 ggsave(file.path(root, "Figures", "MS", "Figure5_SpeciesFscore.jpeg"), width=8, height = 9, units="in")
 
+#FIGURE 6: CALL RATE#####
 
-#APPENDIX 2: SPECIES DETAILS######
+#1. Get data----
+prfrate <- read.csv(file.path(root, "Results", "SingleSpecies", "PRF.csv"))
+
+#2. Plot----
+ggplot(prfrate) + 
+  geom_line(aes(x=threshold, y=f1score, colour=classifier)) + 
+  facet_wrap(~species) + 
+  scale_colour_manual(values=cols3, name="") +
+  theme_classic() +
+  ylab("F1-score") + 
+  xlab("Score threshold")
+
+ggsave(file.path(root, "Figures", "MS", "Figure6_CallRateFScore.jpeg"), width=12, height = 9, units="in")
+
+
+#APPENDIX 2: SPECIES DETAILS COMMUNITY COMPOSITION######
 
 #1. Get data----
 outsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF.csv"))
@@ -125,6 +141,9 @@ colnames(app2) <- c("Common name", "Species code", "Number of training clips", "
 
 #6. Save----
 write.csv(app2, file.path(root, "Writing", "Appendix2.csv"), row.names = FALSE)
+
+#APPENDIX 3: SPECIES DETAILS COMMUNITY COMPOSITION########
+
 
 #SUMMARY STATS##########
 
