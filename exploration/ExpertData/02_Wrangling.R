@@ -30,8 +30,8 @@ covs <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_RecordingC
 #HAWKEARS##########
 
 #1. Get list of raw files----
-files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars"))) %>% 
+files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "filetype")) %>% 
   dplyr::select(path, recording_id)
 
@@ -48,8 +48,8 @@ for(i in 1:nrow(files.he)){
 #BIRDNET#########
 
 #1. Get list of raw files----
-files.bn <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "BirdNET"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "BirdNET"))) %>% 
+files.bn <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "BirdNET", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "BirdNET", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "results", "filetype")) %>% 
   rowwise() %>% 
   mutate(filesize = file.size(path)) %>% 
@@ -74,12 +74,8 @@ raw <- do.call(rbind, list.he) %>%
   rbind(do.call(rbind, list.bn))
 
 write.csv(raw, file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"), row.names = FALSE)
-raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"))
 
-#2. Get inventory of minutes of expert data----
-dur <- eval %>% 
-  dplyr::select(recording_id, minute) %>% 
-  unique()
+raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"))
 
 #2. Summarize to minute----
 min <- raw %>% 
@@ -87,6 +83,7 @@ min <- raw %>%
          minute = ifelse(minute==0, 1, minute)) %>% 
   group_by(classifier, recording_id, minute, species) %>% 
   summarize(score = max(score)) %>% 
+  ungroup() |> 
   pivot_wider(names_from=classifier, values_from=score) %>% 
   dplyr::filter(minute <=3) %>% 
   mutate(recording_id=as.integer(recording_id))
@@ -95,12 +92,12 @@ min <- raw %>%
 dat <- eval %>%
   dplyr::select(recording_id, minute, observer_id, ALFL:YRWA) %>% 
   pivot_longer(ALFL:YRWA, values_to="count", names_to="species") %>% 
-  dplyr::filter(count>0) %>% 
-  rbind(extra) %>% 
-  left_join(covs %>% 
-              dplyr::select(recording_url, recording_id, minute), multiple="all") %>% 
-  full_join(min) %>% 
-  dplyr::select(observer_id, recording_id, minute, species, count, BirdNET, HawkEars) %>% 
-  inner_join(dur)
+  dplyr::filter(count > 0,
+                minute <= 3) %>% 
+  rbind(extra) |> 
+  # left_join(covs %>% 
+  #             dplyr::select(recording_url, recording_id, minute), multiple="all") %>% 
+  full_join(min) 
+  dplyr::select(observer_id, recording_id, minute, species, count, BirdNET, HawkEars)
 
 write.csv(dat, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"), row.names = FALSE)
