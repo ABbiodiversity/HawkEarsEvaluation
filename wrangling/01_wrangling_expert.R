@@ -28,8 +28,8 @@ extra <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_extra_tags.c
 #HAWKEARS##########
 
 #1. Get list of raw files----
-files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars"))) %>% 
+files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "filetype")) %>% 
   dplyr::select(path, recording_id)
 
@@ -46,8 +46,8 @@ for(i in 1:nrow(files.he)){
 #BIRDNET#########
 
 #1. Get list of raw files----
-files.bn <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "BirdNET"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "BirdNET"))) %>% 
+files.bn <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "BirdNET", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "BirdNET", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "results", "filetype")) %>% 
   rowwise() %>% 
   mutate(filesize = file.size(path)) %>% 
@@ -67,18 +67,37 @@ for(i in 1:nrow(files.bn)){
 
 #PERCH##########
 
+files.pr <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "Perch", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "Perch", "tags"))) %>% 
+  separate(file, into=c("recording_id", "classifier", "results", "filetype")) %>% 
+  rowwise() %>% 
+  mutate(filesize = file.size(path)) %>% 
+  ungroup() %>% 
+  dplyr::filter(filesize > 0) %>% 
+  dplyr::select(path, recording_id) 
+
+#2. Read them in----
+list.pr <- list()
+for(i in 1:nrow(files.pr)){
+  list.pr[[i]] <- read_table(files.pr$path[i], col_names = c("start", "end", "species_score"), show_col_types=FALSE) %>% 
+    separate(species_score, into=c("species", "score"), sep=";") %>% 
+    mutate(score = as.numeric(score),
+           recording_id = files.pr$recording_id[i],
+           classifier = "Perch")
+}
 
 #PUT IT TOGETHER#########
 
 #1. Raw data----
+#filter to three minutes
 raw <- do.call(rbind, list.he) %>% 
-  rbind(do.call(rbind, list.bn))
+  rbind(do.call(rbind, list.bn)) |> 
+  rbind(do.call(rbind, list.pr)) |> 
+  dplyr::filter(start <= 180)
 
-write.csv(raw, file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"), row.names = FALSE)
+write.csv(raw, file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNETPerch_raw.csv"), row.names = FALSE)
 
-raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNET_raw.csv"))
-
-interval_full_join(dplyr::filter(eval, fileid==files[i]))
+raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNETPerch_raw.csv"))
 
 #3. Wrangle evaluation data to intervals----
 dat <- eval %>%
@@ -89,12 +108,19 @@ dat <- eval %>%
   mutate(start = 60*(minute-1),
          end = 60*minute)
 
+#4. Get list of HawkEars species----
+spp <- raw |> 
+  dplyr::filter(classifier=="HawkEars") |> 
+  dplyr::select(species) |> 
+  unique()
+
 #4. List of species and recordings----
 loop <- dplyr::select(raw, recording_id, species) %>% 
   unique() %>% 
   rbind(dplyr::select(dat, recording_id, species) %>% 
           unique()) %>% 
   unique() %>% 
+  dplyr::filter(species %in% spp$species) |> 
   arrange(species, recording_id)
 
 #THERE'S GOTTA BE A FASTER WAY OF DOING THIS
@@ -118,3 +144,19 @@ print(paste0("Finished ", i, " of ", nrow(loop)))
 out <- do.call(rbind, out.list)
 
 write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_IntervalJoin.csv"), row.names = FALSE)
+
+#7. Summarize to minute----
+out <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_IntervalJoin.csv"))
+
+min <- out |> 
+  mutate(minute = ifelse(is.na(minute), ceiling(start.y/60), minute),
+         minute = ifelse(minute==0, 1, minute)) |> 
+  group_by(classifier, species, recording_id, minute) |> 
+  summarize(score = max(score, na.rm=TRUE),
+            count = sum(count, na.rm=TRUE)) |> 
+  ungroup() |> 
+  pivot_wider(names_from=classifier, values_from=score) |> 
+  dplyr::select(-'NA') |> 
+  dplyr::filter(species %in% spp$species)
+
+write.csv(min, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"))
