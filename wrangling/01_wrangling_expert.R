@@ -67,6 +67,7 @@ for(i in 1:nrow(files.bn)){
 
 #PERCH##########
 
+#1. Get list of raw fiels----
 files.pr <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "Perch", "tags"), full.names = TRUE),
                        file = list.files(file.path(root, "Results", "ExpertData", "Perch", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "results", "filetype")) %>% 
@@ -92,71 +93,58 @@ for(i in 1:nrow(files.pr)){
 #filter to three minutes
 raw <- do.call(rbind, list.he) %>% 
   rbind(do.call(rbind, list.bn)) |> 
-  rbind(do.call(rbind, list.pr)) |> 
-  dplyr::filter(start <= 180)
+  rbind(do.call(rbind, list.pr))
 
 write.csv(raw, file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNETPerch_raw.csv"), row.names = FALSE)
 
 raw <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_HawkEarsBirdNETPerch_raw.csv"))
 
-#3. Wrangle evaluation data to intervals----
+#2. Summarize to minute----
+round <- raw %>% 
+  mutate(startmin = ceiling((start+0.000001)/60),
+         startmin = ifelse(startmin==0, 1, startmin),
+         endmin = ceiling((end)/60))
+
+#3. Identify the extra minutes----
+extras <- round |> 
+  dplyr::filter(startmin!=endmin) |> 
+  mutate(minute = startmin+1)
+
+#4. Add in the overlap minutes and get max score per minute----
+min <- round |> 
+  mutate(minute = startmin) |> 
+  rbind(extras) |> 
+  group_by(classifier, recording_id, minute, species) %>% 
+  summarize(score = max(score)) %>% 
+  ungroup() |> 
+  pivot_wider(names_from=classifier, values_from=score) %>% 
+  dplyr::filter(minute <=3) %>% 
+  mutate(recording_id=as.integer(recording_id))
+
+#5. Wrangle evaluation data to intervals----
 dat <- eval %>%
   dplyr::select(recording_id, minute, observer_id, ALFL:YRWA) %>% 
   pivot_longer(ALFL:YRWA, values_to="count", names_to="species") %>% 
-  dplyr::filter(count>0) %>% 
-  rbind(extra) %>% 
-  mutate(start = 60*(minute-1),
-         end = 60*minute)
+  rbind(extra) |> 
+  dplyr::filter(count>0)
 
-#4. Get list of HawkEars species----
+table(dat$recording_id, dat$minute)
+
+#6. Get list of evaluation data intervals----
+intervals <- dat |> 
+  dplyr::select(recording_id, minute) |> 
+  unique()
+  
+#7. Get list of HawkEars species----
 spp <- raw |> 
   dplyr::filter(classifier=="HawkEars") |> 
   dplyr::select(species) |> 
   unique()
 
-#4. List of species and recordings----
-loop <- dplyr::select(raw, recording_id, species) %>% 
-  unique() %>% 
-  rbind(dplyr::select(dat, recording_id, species) %>% 
-          unique()) %>% 
-  unique() %>% 
-  dplyr::filter(species %in% spp$species) |> 
-  arrange(species, recording_id)
+#8. Put everything together----
+out <- full_join(min, dat, multiple="all") |> 
+  inner_join(intervals) |> 
+  inner_join(spp) |> 
+  mutate(detection = ifelse(!is.na(count), 1, 0))
 
-#THERE'S GOTTA BE A FASTER WAY OF DOING THIS
-
-#5. Set up loop----
-out.list <- list()
-for(i in 1:nrow(loop)){
-  
-  #6. Interval join evaluation and raw data----
-  out.list[[i]] <- dplyr::filter(dat, recording_id==loop$recording_id[i], species==loop$species[i]) %>%
-    dplyr::select(-recording_id, -species) %>% 
-    interval_full_join(dplyr::filter(raw, recording_id==loop$recording_id[i], species==loop$species[i]) %>% 
-                         dplyr::select(-recording_id, -species)) %>% 
-    mutate(recording_id = loop$recording_id[i],
-           species = loop$species[i])
-
-print(paste0("Finished ", i, " of ", nrow(loop)))
-  
-}
-
-out <- do.call(rbind, out.list)
-
-write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_IntervalJoin.csv"), row.names = FALSE)
-
-#7. Summarize to minute----
-out <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_IntervalJoin.csv"))
-
-min <- out |> 
-  mutate(minute = ifelse(is.na(minute), ceiling(start.y/60), minute),
-         minute = ifelse(minute==0, 1, minute)) |> 
-  group_by(classifier, species, recording_id, minute) |> 
-  summarize(score = max(score, na.rm=TRUE),
-            count = sum(count, na.rm=TRUE)) |> 
-  ungroup() |> 
-  pivot_wider(names_from=classifier, values_from=score) |> 
-  dplyr::select(-'NA') |> 
-  dplyr::filter(species %in% spp$species)
-
-write.csv(min, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"))
+write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"))
