@@ -147,4 +147,4 @@ out <- full_join(min, dat, multiple="all") |>
   inner_join(spp) |> 
   mutate(detection = ifelse(!is.na(count), 1, 0))
 
-write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"))
+write.csv(out, file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv"), row.names = FALSE)
