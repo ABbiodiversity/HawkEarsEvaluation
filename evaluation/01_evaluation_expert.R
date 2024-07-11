@@ -163,6 +163,10 @@ write.csv(out.min, file.path(root, "Results", "ExpertData", "PRFRichness_Recordi
 #PER SPECIES#########
 
 #1. Set up species loop----
+sp <- min |> 
+  dplyr::select(species) |> 
+  unique()
+
 out.list <- list()
 prf.list <- list()
 for(i in 1:nrow(sp)){
