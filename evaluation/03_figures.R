@@ -7,6 +7,10 @@ library(tidyverse)
 library(readxl)
 library(sf)
 library(terra)
+library(ebirdst)
+library(auk)
+library(tidyterra)
+library(gridExtra)
 
 #2. Set root file path---
 root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
@@ -17,79 +21,129 @@ cols3 <- c("#4A7DA8", "#E39D22", "#0F9D58")
 
 #FIGURE 1: CANADA####
 
-#1. Get a list of the birdlife files----
-shp <- data.frame(path = list.files("G:/Shared drives/BAM_Spatial/NatureServe/Raw", recursive=TRUE, full.names = TRUE, pattern="*_pl.shp")) |> 
-  separate(path, into=c("f1", "f2", "f3", "f4", "f5", "family", "spcode"), remove=FALSE, sep="/") |> 
-  mutate(spcode = str_sub(spcode, -100, -8)) |> 
-  dplyr::select(path, family, spcode)
+#1. List of North American species----
+nabirds <- read.csv(file.path(root, "Other", "ABA_Checklist-8.14.csv"), skip=4) |> 
+  data.table::setnames(c("family", "common_name", "french", "scientific_name", "species", "status")) |> 
+  dplyr::select(-family, -french) |> 
+  dplyr::filter(status %in% c(1, 2))
 
-#2. Get list of HawkEars spp----
-spp <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv")) |> 
-  dplyr::select(species) |> 
-  unique()
+#2. Get the ebird codes----
+codes <- get_ebird_taxonomy()
 
-#3. Get the species names matching----
-codes <- read_excel("G:/Shared drives/BAM_Spatial/NatureServe/Metadata - assembled by Justine/NATURESERV_LIST.xls", skip=1) |> 
-  separate('SCIENTIFIC NAME', into=c("genus", "species", "species2"), remove=FALSE) |> 
-  mutate(species = ifelse(is.na(species2), species, species2)) |> 
-  dplyr::select(-species2) |> 
-  mutate(spcode = str_to_lower(paste0(str_sub(genus, 1, 4), "_", str_sub(species, 1, 4))))
+#3. Make to do list----
+all <- left_join(nabirds, codes) |> 
+  left_join(ebirdst_runs |> 
+              mutate(available = 1))
 
-#TO DO: UPDATE THIS LIST FOR ALL SPECIES######
+#check
+nrow(dplyr::filter(all, is.na(available)))
 
-#4. Put together----
-#Take out the multiple matches
-list <- spp |> 
-  rename(CODE = species) |> 
-  left_join(codes) |> 
-  left_join(shp) |> 
-  dplyr::filter(!(CODE=="BRBL" & family=="Fringillidae"))
+todo <- dplyr::filter(all, !is.na(available))
 
-use <- dplyr::filter(list, !is.na(path))
+#5. Download the range files----
+for(i in 1:nrow(todo)){
+  
+  ebirdst_download_status(species = todo$species_code[i],
+                          download_abundance = FALSE,
+                          download_ranges = TRUE,
+                          force=TRUE)
+}
 
-#5. Get a north America shapefile----
-can <- read_sf(file.path("G:/Shared drives/BAM_NationalModels5", "Regions", "CAN_adm", "CAN_adm0.shp")) |> 
-  st_transform(crs=4269) 
-usa <- read_sf(file.path("G:/Shared drives/BAM_NationalModels5", "Regions", "USA_adm", "USA_adm0.shp")) |> 
-  st_transform(crs=4269)
+#6. Make a raster of north america----
+sa <- rast(xmin = -180, xmax = -50, ymin = 15, ymax = 90, nrow=1000, ncol=1000)
 
-ext(usa)
-
-#TO DO: FIX THE EXTENT##########
-
-nam.shp <- rbind(can, usa) |> 
-  st_union() |> 
-  st_as_sf() |> 
-#  st_crop(xmin = -180, xmax = -50, ymin = 15, ymax = 85) |> 
-  vect()
-
-#6. Make it a raster----
-nam.r <- rast(nam.shp, nrow=1000, ncol=1000)
-
-#7. Set up the loop----
-for(i in 1:3){
+#7. Make a raster of all North America species----
+for(i in 1:nrow(todo)){
   
   #8. Read in the shapefile----
-  shp.i <- read_sf(use$path[i], crs=4269) |>
-    dplyr::filter(ORIGIN==2) |> 
-    st_union() |> 
-    st_as_sf() |> 
-    mutate(count = 1)
+  shp.i <- try(load_ranges(todo$species_code[i]) |> 
+    dplyr::filter(season=="breeding"))
+  
+  if(inherits(shp.i, "try-error")){next}
+  if(nrow(shp.i)==0){next}
   
   #9. Make it a raster & stack----
-  r.i <- rasterize(vect(shp.i), nam.r)
+  r.i <- rasterize(vect(shp.i), sa)
   if(i==1){rast.out <- r.i} else { rast.out <- mosaic(rast.out, r.i, fun="sum")}
-
-  cat("Finished species", i, "of", nrow(use), "\n")
+  
+  cat("Finished species", i, "of", nrow(todo), "\n")
   
 }
 
+#10. Save the output raster----
+writeRaster(rast.out, file.path(root, "Other", "ABA_Species_Mosaic.tif"), overwrite=TRUE)
 
+#11. Get list of HawkEars spp----
+spp <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv")) |> 
+  dplyr::select(species) |> 
+  unique() |> 
+  mutate(species = case_when(species =="AMGO" ~ "AGOL",
+                          species=="NOGO" ~ "AGOS",
+                          species=="PSFL" ~ "WEFL",
+                          species=="BTGW" ~ "BTYW",
+                          !is.na(species) ~ species)) 
 
-#FIGURE 4: PRF & RICHNESS####
+#12. Make next todo----
+todo.he <- todo |> 
+  dplyr::filter(species %in% spp$species)
+
+#13. Set up the loop for the hawkears raster----
+for(i in 1:nrow(todo.he)){
+  
+  #14. Read in the shapefile----
+  shp.i <- try(load_ranges(todo.he$species_code[i]) |> 
+    dplyr::filter(season=="breeding"))
+  
+  if(inherits(shp.i, "try-error")){next}
+  if(nrow(shp.i)==0){next}
+  
+  #15. Make it a raster & stack----
+  r.i <- rasterize(vect(shp.i), sa)
+  if(i==1){rast.he <- r.i} else { rast.he <- mosaic(rast.he, r.i, fun="sum")}
+
+  cat("Finished species", i, "of", nrow(todo.he), "\n")
+  
+}
+
+#16. Save the output raster----
+writeRaster(rast.he, file.path(root, "Other", "HawkEars_Species_Mosaic.tif"), overwrite=TRUE)
+
+#17. Crop to a shapefile----
+country <- read_sf(file.path(root, "Other", "ne_110m_admin_0_countries", "ne_110m_admin_0_countries.shp")) |> 
+  dplyr::filter(NAME %in% c("Canada", "United States of America"))
+
+rast.plot.he <- rast.he |> 
+  crop(vect(country), mask=TRUE)
+
+rast.plot.nam <- rast.out |> 
+  crop(vect(country), mask=TRUE)
+
+#18. Divide total species by HE species----
+rast.plot.prop <- rast.plot.he/rast.plot.nam
+
+#19. Make plots----
+plot.he <- ggplot() +   
+  geom_spatraster(data=rast.plot.he, na.rm=TRUE) +
+  scale_fill_viridis_c(na.value=NA, name = "Number of\nspecies") +
+  theme_classic() +
+  ylim(c(25, 85)) +
+  theme(legend.position = "bottom")
+plot.he
+
+plot.prop <- ggplot() +   
+  geom_spatraster(data=rast.plot.prop, na.rm=TRUE) +
+  scale_fill_viridis_c(na.value=NA, name = "Proportion\nof species", option = "B") +
+  theme_classic() +
+  ylim(c(25, 85)) +
+  theme(legend.position = "bottom")
+plot.prop
+
+ggsave(grid.arrange(plot.he, plot.prop, ncol=2), file = file.path(root, "Figures", "MS", "Figure1_StudyAreaSpecies.jpeg"), width = 8, height = 4)
+
+#FIGURE 3: PRF & RICHNESS####
 
 #1. Get data----
-prfrich <- read.csv(file.path(root, "Results", "ExpertData", "PRFRichness_Recording.csv"))
+prfrichread.csv(file.path(root, "Results", "ExpertData", "PRFRichness_Recording.csv"))
 
 #2. Metric factors----
 prfrich$metric <- factor(prfrich$metric, levels=c("precision", "recall", "fscore", "richness"),
@@ -98,17 +152,18 @@ prfrich$metric <- factor(prfrich$metric, levels=c("precision", "recall", "fscore
 #3. Plot----
 ggplot(prfrich) + 
   geom_ribbon(aes(x=threshold, ymin = mn-std, ymax = mn+std, group=classifier), alpha = 0.1) +
-  geom_line(aes(x=threshold, y=mn, colour=classifier)) + 
+  geom_line(aes(x=threshold, y=mn, colour=classifier), linewidth=1) + 
   facet_wrap(~metric, scales="free_y") + 
-  scale_colour_manual(values=cols2, name="") +
+  scale_colour_manual(values=cols3, name="") +
   theme_classic() +
   ylab("Mean value per recording") + 
-  xlab("Score threshold")
+  xlab("Score threshold") +
+  theme(legend.position = "bottom")
 
 #4. Save----
-ggsave(file.path(root, "Figures", "MS", "Figure4_PRFRichness.jpeg"), width=8, height = 5, units="in")
+ggsave(file.path(root, "Figures", "MS", "Figure3_PRFRichness.jpeg"), width=6, height = 7, units="in")
 
-#FIGURE 5: FSCORE COMPARISON####
+#BONUS FIGURE: FSCORE COMPARISON####
 
 #1. Get data---
 prfsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF_Species.csv"))
@@ -132,28 +187,35 @@ ggplot(prf.maxf) +
   geom_abline(aes(intercept=0, slope=1)) + 
   theme_classic() +
   scale_colour_viridis_c(name = "Log number of detections\nin evaluation dataset") +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "right") +
   xlab("Maximum F1-score for BirdNET") +
   ylab("Maximum F1-score for HawkEars")
 
-ggsave(file.path(root, "Figures", "MS", "Figure5_SpeciesFscore.jpeg"), width=8, height = 9, units="in")
+ggsave(file.path(root, "Figures", "MS", "FigureNA_SpeciesFscore.jpeg"), width=8, height = 5.5, units="in")
 
-#FIGURE 6: CALL RATE#####
+#FIGURE 4: CALL RATE#####
 
 #1. Get data----
-prfrate <- read.csv(file.path(root, "Results", "SingleSpecies", "PRF.csv"))
+prfrate <- read.csv(file.path(root, "Results", "SingleSpecies", "PRF.csv")) |> 
+  dplyr::filter(threshold >= 0.1)
+
+species <- data.frame(species = unique(prfrate$species),
+                      name = c("Barred owl", "Black-throated green warbler", "Common yellowthroat",
+                               "Olive-sided flycatcher", "Ovenbird", "Ruffed grouse",
+                               "Swainson's thrush", "Tennesee warbler", "White-throated sparrow"))
 
 #2. Plot----
-ggplot(prfrate) + 
-  geom_line(aes(x=threshold, y=f1score, colour=classifier)) + 
-  facet_wrap(~species) + 
+ggplot(prfrate |> left_join(species)) + 
+  geom_line(aes(x=threshold, y=f1score, colour=classifier), linewidth = 1) + 
+  facet_wrap(~name) + 
   scale_colour_manual(values=cols3, name="") +
   theme_classic() +
   ylab("F1-score") + 
-  xlab("Score threshold")
+  xlab("Score threshold") +
+  theme(legend.position = "bottom") +
+  ylim(c(0,1))
 
-ggsave(file.path(root, "Figures", "MS", "Figure6_CallRateFScore.jpeg"), width=12, height = 9, units="in")
-
+ggsave(file.path(root, "Figures", "MS", "Figure4_CallRateFScore.jpeg"), width=9, height = 10, units="in")
 
 #APPENDIX 2: SPECIES DETAILS COMMUNITY COMPOSITION######
 
@@ -184,14 +246,13 @@ recordings <- raw |>
 
 #3. Figure out which classifier is better----
 prf.maxf <- prfsp |> 
-  group_by(species, classifier) |> 
-  dplyr::filter(fscore == max(fscore, na.rm=TRUE)) |> 
-  sample_n(1) |> 
+  group_by(species) |> 
+  mutate(maxfscore=max(fscore, na.rm=TRUE)) |> 
   ungroup() |> 
-  left_join(prf) |> 
-  pivot_wider(names_from=classifier, values_from=precision:threshold) |> 
-  mutate(fscore_delta = fscore_HawkEars - fscore_BirdNET,
-         better = ifelse(fscore_delta > 0 | is.na(fscore_delta), "HawkEars", "BirdNET"))
+  dplyr::filter(fscore==maxfscore) |> 
+  group_by(species) |> 
+  dplyr::filter(threshold == max(threshold)) |> 
+  ungroup()
 
 #4. Put together----
 app2 <- train  |> 
@@ -212,10 +273,11 @@ app2 <- train  |>
 #5. Fix column names----
 colnames(app2) <- c("Common name", "Species code", "Number of training clips", "Number of evaluation recordings", "Number of evaluation detections (minutes)",  "ROC AUC", "MAP AUC", "Precision (universal threshold)", "Recall (universal threshold)", "F1-score threshold", "Precision (F1-score threshold", "Recall (F1-score threshold", "Classifier with highest F1-score")
 
+#7. 
+
 #6. Save----
 write.csv(app2, file.path(root, "Writing", "Appendix2.csv"), row.names = FALSE)
 
-#APPENDIX 3: SPECIES DETAILS COMMUNITY COMPOSITION########
 
 
 #SUMMARY STATS##########
@@ -267,7 +329,60 @@ sp.rec <- sp |>
 
 summary(sp.rec)
 
-#2. Community performance----
+#2. Call rate dataset----
+cr <- read.csv(file.path(root, "Data", "Evaluation", "SingleSpecies_all.csv")) |> 
+  dplyr::select(project_id, task_id, recording_date_time, task_duration, target) |> 
+  mutate(task_duration = round(task_duration)) |> 
+  unique() |> 
+  dplyr::filter(!target %in% c("Woodpeckers", "YERA")) |> 
+  mutate(datetime = ymd_hms(recording_date_time),
+         hour = hour(datetime),
+         doy = yday(datetime),
+         month = month(datetime),
+         year = year(datetime),
+         tod = case_when(hour %in% 3:16 ~ "day",
+                         hour %in% c(19:23, 0, 2) ~ "night"),
+         toy = case_when(doy %in% c(86:142) ~ "early",
+                         doy %in% c(143:223) ~ "songbird"))
+
+#summarize
+cr.total <- cr |> 
+  group_by(target) |> 
+  summarize(n=n(),
+            total_duration = sum(task_duration)/60,
+            mean_duration = mean(task_duration)/60) |> 
+  ungroup()
+
+#duration per species
+cr.total
+summary(cr.total)
+
+#mean recording duration
+table(cr$task_duration)
+
+#Number of recordings
+nrow(cr)
+
+#time of day
+cr |> 
+  group_by(tod, target) |> 
+  summarize(n=n()) |> 
+  group_by(target) |> 
+  mutate(n/sum(n))
+
+ggplot(cr) +
+  geom_histogram(aes(x=hour)) +
+  facet_wrap(~target, scales="free_y")
+
+#day of year
+dat |> 
+  group_by(toy) |> 
+  summarize(n()/nrow(dat))
+
+#years
+table(dat$year)
+
+#3. Community performance----
 
 #precision cross over
 prfrich <- read.csv(file.path(root, "Results", "ExpertData", "PRFRichness_Recording.csv"))
@@ -296,16 +411,65 @@ head(prfrich |> dplyr::filter(classifier=="HawkEars", metric=="recall"))
 #max precision
 tail(prfrich |> dplyr::filter(classifier=="HawkEars", metric=="precision"))
 
+#max fscore
+fscore <- prfrich |> 
+  dplyr::filter(metric=="fscore") |> 
+  group_by(classifier) |> 
+  dplyr::filter(mn == max(mn)) |> 
+  ungroup()
+
+#species richness at highest fscore
+fscore |> 
+  dplyr::select(classifier, threshold) |> 
+  left_join(prfrich, multiple="all")
+
+#species richness at precision of 0.7 threshold
+prfrich |> 
+  dplyr::filter(round(mn, 2)==0.9,
+                metric=="precision") |> 
+  group_by(classifier) |> 
+  dplyr::filter(threshold==min(threshold)) |> 
+  ungroup() |> 
+  dplyr::select(classifier, threshold) |> 
+  left_join(prfrich)
+
 #number of species with higher maxfscore
 prf.maxf <- prfsp |> 
+  group_by(species) |> 
+  mutate(maxfscore=max(fscore, na.rm=TRUE)) |> 
+  ungroup() |> 
+  dplyr::filter(fscore==maxfscore) |> 
+  group_by(species) |> 
+  dplyr::filter(threshold == max(threshold)) |> 
+  ungroup()
+
+table(prf.maxf$species, prf.maxf$classifier)
+table(prf.maxf$classifier)
+table(prf.maxf$species)
+
+#4. Call rate performance----
+
+#max f1 score
+prfrate |> 
   group_by(species, classifier) |> 
-  dplyr::filter(fscore == max(fscore, na.rm=TRUE)) |> 
+  summarize(f1score = max(f1score)) |> 
+  group_by(species) |> 
+  summarize(diff = max(f1score) - min(f1score)) |> 
+  arrange(diff)
+
+#max precision
+prfrate |> 
+  group_by(species, classifier) |> 
+  summarize(precision = max(precision))
+
+#recall at 90% precision
+prfrate |> 
+  mutate(diff = abs(0.9 - precision)) |> 
+  group_by(species, classifier) |> 
+  dplyr::filter(diff == min(diff)) |> 
   sample_n(1) |> 
   ungroup() |> 
-  left_join(prf) |> 
-  pivot_wider(names_from=classifier, values_from=precision:threshold) |> 
-  mutate(fscore_delta = fscore_HawkEars - fscore_BirdNET,
-         better = ifelse(fscore_delta > 0 | is.na(fscore_delta), "HawkEars", "BirdNET")) |> 
-  left_join(outsp |> dplyr::select(species, hits))
+  group_by(classifier) |> 
+  summarize(recallmn = mean(recall),
+            recallsd = sd(recall))
 
-table(prf.maxf$better)
