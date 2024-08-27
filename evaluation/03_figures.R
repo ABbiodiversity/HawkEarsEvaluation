@@ -16,8 +16,7 @@ library(gridExtra)
 root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
 
 #3. Colours----
-cols2 <- c("#4A7DA8", "#E39D22")
-cols3 <- c("#4A7DA8", "#E39D22", "#0F9D58")
+cols3 <- c("#355F89", "#E39D22", "#34A853")
 
 #FIGURE 1: CANADA####
 
@@ -73,8 +72,11 @@ for(i in 1:nrow(todo)){
 #10. Save the output raster----
 writeRaster(rast.out, file.path(root, "Other", "ABA_Species_Mosaic.tif"), overwrite=TRUE)
 
+rast.out <- rast(file.path(root, "Other", "ABA_Species_Mosaic.tif"))
+
 #11. Get list of HawkEars spp----
-spp <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv")) |> 
+spp <- read.csv(file.path(root, "Results", "HawkEars-training-record-counts.csv")) |> 
+  rename(species = Code) |> 
   dplyr::select(species) |> 
   unique() |> 
   mutate(species = case_when(species =="AMGO" ~ "AGOL",
@@ -108,6 +110,8 @@ for(i in 1:nrow(todo.he)){
 #16. Save the output raster----
 writeRaster(rast.he, file.path(root, "Other", "HawkEars_Species_Mosaic.tif"), overwrite=TRUE)
 
+rast.he <- rast(file.path(root, "Other", "HawkEars_Species_Mosaic.tif"))
+
 #17. Crop to a shapefile----
 country <- read_sf(file.path(root, "Other", "ne_110m_admin_0_countries", "ne_110m_admin_0_countries.shp")) |> 
   dplyr::filter(NAME %in% c("Canada", "United States of America"))
@@ -140,20 +144,51 @@ plot.prop
 
 ggsave(grid.arrange(plot.he, plot.prop, ncol=2), file = file.path(root, "Figures", "MS", "Figure1_StudyAreaSpecies.jpeg"), width = 8, height = 4)
 
+#20. Species not in HawkEars----
+missing <- anti_join(todo, spp) |> 
+  dplyr::select(common_name:breeding_end)
+
+pt <- st_as_sf(data.frame(x=-113, y=49), coords = c("x", "y"), crs = 4326)
+
+missing$prairie <- NA
+for(i in 1:nrow(missing)){
+  
+  #14. Read in the shapefile----
+  shp.i <- try(load_ranges(missing$species_code[i]) |> 
+                 dplyr::filter(season=="breeding"))
+  
+  if(nrow(shp.i)==0){next}
+  
+  int.i <- st_intersection(shp.i, pt)
+  
+  if(nrow(int.i)==0){missing$prairie[i] <- 0} else {missing$prairie[i] <- 1}
+  
+  cat("Finished species", i, "of", nrow(missing), "\n")
+  
+}
+
+table(missing$prairie)
+
+write.csv(missing, file.path(root, "Other", "MissingSpecies.csv"), row.names = FALSE)
+
 #FIGURE 3: PRF & RICHNESS####
 
 #1. Get data----
-prfrichread.csv(file.path(root, "Results", "ExpertData", "PRFRichness_Recording.csv"))
+prfrich_raw <- read.csv(file.path(root, "Results", "ExpertData", "PRFRichness_Summary.csv")) 
+prfrich <- read.csv(file.path(root, "Results", "ExpertData", "PRFRichness_Recording.csv"))
 
 #2. Metric factors----
 prfrich$metric <- factor(prfrich$metric, levels=c("precision", "recall", "fscore", "richness"),
                          labels=c("Precision", "Recall", "F1-score", "Species richness"))
 
+prfrich_raw$metric <- factor(prfrich_raw$metric, levels=c("precision", "recall", "fscore", "richness"),
+                         labels=c("Precision", "Recall", "F1-score", "Species richness"))
+
 #3. Plot----
 ggplot(prfrich) + 
-  geom_ribbon(aes(x=threshold, ymin = mn-std, ymax = mn+std, group=classifier), alpha = 0.1) +
+  geom_line(data=prfrich_raw, aes(x=threshold, y=value, group=minute_id), alpha = 0.5, linewidth = 0.2, colour="grey70") +
   geom_line(aes(x=threshold, y=mn, colour=classifier), linewidth=1) + 
-  facet_wrap(~metric, scales="free_y") + 
+  facet_grid(metric ~ classifier, scales="free") + 
   scale_colour_manual(values=cols3, name="") +
   theme_classic() +
   ylab("Mean value per recording") + 
@@ -161,7 +196,7 @@ ggplot(prfrich) +
   theme(legend.position = "bottom")
 
 #4. Save----
-ggsave(file.path(root, "Figures", "MS", "Figure3_PRFRichness.jpeg"), width=6, height = 7, units="in")
+ggsave(file.path(root, "Figures", "MS", "Figure3_PRFRichness.jpeg"), width=9, height = 10, units="in")
 
 #BONUS FIGURE: FSCORE COMPARISON####
 
@@ -217,7 +252,7 @@ ggplot(prfrate |> left_join(species)) +
 
 ggsave(file.path(root, "Figures", "MS", "Figure4_CallRateFScore.jpeg"), width=9, height = 10, units="in")
 
-#APPENDIX 2: SPECIES DETAILS COMMUNITY COMPOSITION######
+#APPENDIX 1: SPECIES DETAILS COMMUNITY COMPOSITION######
 
 #1. Get data----
 outsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF.csv"))
@@ -252,7 +287,8 @@ prf.maxf <- prfsp |>
   dplyr::filter(fscore==maxfscore) |> 
   group_by(species) |> 
   dplyr::filter(threshold == max(threshold)) |> 
-  ungroup()
+  ungroup() |> 
+  rename(better = classifier)
 
 #4. Put together----
 app2 <- train  |> 
@@ -278,6 +314,26 @@ colnames(app2) <- c("Common name", "Species code", "Number of training clips", "
 #6. Save----
 write.csv(app2, file.path(root, "Writing", "Appendix2.csv"), row.names = FALSE)
 
+#APPENDIX 3: HEURISTICS##########
+
+#1. Get data----
+heur_raw <- read.csv(file.path(root, "Results", "ExpertData", "pr_curves_for_heuristics.csv"))
+
+#2. Wrangle----
+heur <- heur_raw |> 
+  pivot_longer(base:all, names_to="heuristic", values_to="recall")
+
+#3. Plot----
+ggplot(heur) + 
+  geom_line(aes(x=precision, y=recall, colour=heuristic)) + 
+  theme_classic() +
+  ylab("Recall") + 
+  xlab("Precision") +
+  theme(legend.position = "right") +
+  ylim(c(0,1))
+
+#4. Save----
+ggsave(file.path(root, "Figures", "MS", "Appendix3_Heuristics.jpeg"), width = 6, height = 5)
 
 
 #SUMMARY STATS##########
@@ -394,6 +450,12 @@ prfrich |>
   dplyr::filter(metric=="precision") |> 
   pivot_wider(names_from=classifier, values_from=mn) |> 
   dplyr::filter(round(BirdNET, 1)==round(HawkEars, 1))
+
+prfrich |> 
+  dplyr::select(-std) |> 
+  dplyr::filter(metric=="precision") |> 
+  pivot_wider(names_from=classifier, values_from=mn) |> 
+  dplyr::filter(round(Perch, 1)==round(HawkEars, 1))
 
 prfrich |> 
   dplyr::select(-std) |> 
