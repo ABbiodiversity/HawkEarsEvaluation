@@ -4,7 +4,6 @@
 
 #1. Load libraries----
 library(tidyverse)
-library(fuzzyjoin)
 
 #2. Set root file path---
 root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
@@ -28,8 +27,8 @@ extra <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_extra_tags.c
 #HAWKEARS##########
 
 #1. Get list of raw files----
-files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars", "tags"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars", "tags"))) %>% 
+files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars-2024-08-01-with-location-date", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars-2024-08-01-with-location-date", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "filetype")) %>% 
   dplyr::select(path, recording_id)
 
