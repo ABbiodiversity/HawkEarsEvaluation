@@ -92,7 +92,7 @@ ggplot(pr) +
 #PER RECORDING MINUTE#######
 
 #1. Set up recording loop----
-mins <- unique(dat.he$minute_id)
+mins <- sort(unique(dat.he$minute_id))
 
 min.list <- list()
 for(i in 1:length(mins)){
