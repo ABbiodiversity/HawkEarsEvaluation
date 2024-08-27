@@ -11,6 +11,7 @@ library(ebirdst)
 library(auk)
 library(tidyterra)
 library(gridExtra)
+library(RColorBrewer)
 
 #2. Set root file path---
 root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
@@ -304,36 +305,83 @@ app2 <- train  |>
          minutes = ifelse(is.na(minutes), 0, minutes),
          ROC = NA,
          MAP = NA) |> 
-  dplyr::select(Name, species, Count, recordings, minutes, ROC, MAP, precision_universal, recall_universal, threshold_fscore, precision_fscore, recall_fscore, better)
+  dplyr::select(Name, species, Count, minutes, precision_universal, recall_universal, threshold_fscore, precision_fscore, recall_fscore, better)
+
+#5. Get the vocal activity results----
+prfrate <- read.csv(file.path(root, "Results", "SingleSpecies", "PRF.csv")) |> 
+  dplyr::filter(threshold >= 0.1)
+
+#6. Get metrics at 0.7----
+prfrate_universal <- prfrate |> 
+  dplyr::filter(threshold==0.7, classifier=="HawkEars") |> 
+  dplyr::select(species, precision, recall) |> 
+  rename(precision_universal_activity = precision, recall_universal_activity = recall)
+  
+#7. Get metrics at max Fscore----
+prfrate_f1score <- prfrate |> 
+  dplyr::filter(classifier=="HawkEars") |> 
+  group_by(species) |> 
+  summarize(f1score = max(f1score)) |> 
+  ungroup() |> 
+  left_join(prfrate) |> 
+  dplyr::select(species, f1score, precision, recall) |> 
+  rename(precision_f1score_activity = precision, recall_f1score_activity = recall, f1score_activity = f1score)
+
+#8. Get the dataset details----
+cr <- read.csv(file.path(root, "Data", "Evaluation", "SingleSpecies_all.csv")) |> 
+  mutate(task_duration = round(task_duration)) |> 
+  unique() |> 
+  dplyr::filter(!target %in% c("Woodpeckers", "YERA")) 
+
+#9. Summarize the dataset-----
+cr.det <- cr |> 
+  mutate(target = case_when(species_code=="WTSP" & target=="TEWA, WTSP" ~ "WTSP",
+                            species_code=="TEWA" & target=="TEWA, WTSP" ~ "TEWA",
+                            !is.na(target) ~ target)) |> 
+  dplyr::filter(species_code!="NONE",
+                !is.na(target),
+                target!="TEWA, WTSP") |> 
+  group_by(target) |> 
+  summarize(detections = n()) |> 
+  ungroup() |> 
+  rename(species = target)
+
+#8. Put together again----
+app2b <- app2 |> 
+  left_join(prfrate_universal) |> 
+  left_join(prfrate_f1score) |> 
+  left_join(cr.det)
 
 #5. Fix column names----
-colnames(app2) <- c("Common name", "Species code", "Number of training clips", "Number of evaluation recordings", "Number of evaluation detections (minutes)",  "ROC AUC", "MAP AUC", "Precision (universal threshold)", "Recall (universal threshold)", "F1-score threshold", "Precision (F1-score threshold", "Recall (F1-score threshold", "Classifier with highest F1-score")
-
-#7. 
+colnames(app2b) <- c("Common name", "Species code", "Number of training clips", "Number of evaluation detections (minutes; community)", "Precision_universalthreshold (community)", "Recall _universalthreshold (community)", "F1score threshold (community)", "Precision_F1scorethreshold (community)", "Recall_F1scorethreshold (community)", "Classifier with highest F1score (community)", "Number of evaluation detections (calls; vocal activity)", "Precision_universalthreshold (vocal activity)", "Recall _universalthreshold (vocal activity)", "F1score threshold (vocal activity)", "Precision_F1scorethreshold (vocal activity)", "Recall_F1scorethreshold (vocal activity)")
 
 #6. Save----
-write.csv(app2, file.path(root, "Writing", "Appendix2.csv"), row.names = FALSE)
+write.csv(app2b, file.path(root, "Writing", "Appendix1.csv"), row.names = FALSE)
 
 #APPENDIX 3: HEURISTICS##########
+
+heuristic_cols <- brewer.pal(n=8, name = "Dark2")[c(1,2,3,6)]
 
 #1. Get data----
 heur_raw <- read.csv(file.path(root, "Results", "ExpertData", "pr_curves_for_heuristics.csv"))
 
 #2. Wrangle----
 heur <- heur_raw |> 
-  pivot_longer(base:all, names_to="heuristic", values_to="recall")
+  pivot_longer(base:all, names_to="heuristic", values_to="recall") |> 
+  mutate(heuristic = factor(heuristic, levels = c("base", "choose", "overlap", "all"), labels = c("Base", "Channel selection", "Above plus\nwindow overlap", "Above plus\nspecies pool\nadjustment")))
 
 #3. Plot----
 ggplot(heur) + 
-  geom_line(aes(x=precision, y=recall, colour=heuristic)) + 
+  geom_line(aes(x=precision, y=recall, colour=heuristic), linewidth = 1) + 
   theme_classic() +
   ylab("Recall") + 
   xlab("Precision") +
   theme(legend.position = "right") +
+  scale_colour_manual(name = "", values = heuristic_cols) +
   ylim(c(0,1))
 
 #4. Save----
-ggsave(file.path(root, "Figures", "MS", "Appendix3_Heuristics.jpeg"), width = 6, height = 5)
+ggsave(file.path(root, "Figures", "MS", "Appendix3_Heuristics.jpeg"), width = 7, height = 5)
 
 
 #SUMMARY STATS##########
