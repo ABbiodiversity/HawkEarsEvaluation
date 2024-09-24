@@ -13,9 +13,9 @@ root <- "G:/Shared drives/ABMI_Recognizers/HawkEars"
 #1. Get list of files----
 files <- data.frame(path = list.files(file.path(root, "Results", "SingleSpecies"), pattern="*.csv", full.names = TRUE),
                     file = list.files(file.path(root, "Results", "SingleSpecies"), pattern="*.csv")) |> 
-  separate(file, into=c("species", "classifier", "p", "r", "filetype"), remove=FALSE) |> 
-  dplyr::filter(!(classifier=="HawkEars" & filetype=="csv"),
-                !is.na(filetype))
+  separate(file, into=c("species", "classifier", "p", "r", "year", "month", "filetype"), remove=FALSE) |> 
+  dplyr::filter(!(classifier=="HawkEars" & filetype=="csv" & month=="07") | (species=="RUGR" & month=="07") | classifier %in% c("Perch", "BirdNET"),
+                species!="PRF")
 
 table(files$classifier, files$species)
 
