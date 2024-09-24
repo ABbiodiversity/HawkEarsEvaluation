@@ -76,7 +76,8 @@ writeRaster(rast.out, file.path(root, "Other", "ABA_Species_Mosaic.tif"), overwr
 rast.out <- rast(file.path(root, "Other", "ABA_Species_Mosaic.tif"))
 
 #11. Get list of HawkEars spp----
-spp <- read.csv(file.path(root, "Results", "HawkEars-training-record-counts.csv")) |> 
+spp <- read.csv(file.path(root, "Results", "HawkEars-training-record-counts-2024-09.csv")) |> 
+  dplyr::filter(row_number() < 317) |> 
   rename(species = Code) |> 
   dplyr::select(species) |> 
   unique() |> 
@@ -256,26 +257,24 @@ ggsave(file.path(root, "Figures", "MS", "Figure4_CallRateFScore.jpeg"), width=9,
 #APPENDIX 1: SPECIES DETAILS COMMUNITY COMPOSITION######
 
 #1. Get data----
-outsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF.csv"))
+outsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF.csv")) |> 
+  dplyr::filter(species %in% raw$species)
 train <- read.csv(file.path(root, "Results", "HawkEars-training-record-counts.csv"))
-raw <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData.csv"))
-prfsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF_Species.csv"))
+raw <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_All.csv"))
+prfsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF_Species.csv")) |> 
+  dplyr::filter(species %in% raw$species)
 
 #2. Calculate number of recordings & minutes----
 minutes <- raw |> 
-  pivot_longer(ALFL:YRWA, names_to="species", values_to="abundance") |> 
-  dplyr::filter(abundance > 0,
-                minute <= 3) |> 
+  dplyr::filter(minute <= 3) |> 
   group_by(species) |> 
   summarize(minutes=n()) |> 
   ungroup()
 
 recordings <- raw |> 
-  pivot_longer(ALFL:YRWA, names_to="species", values_to="abundance") |> 
-  dplyr::filter(abundance > 0,
-                minute <= 3) |> 
-  group_by(species, recording_url) |>
-  summarize(abundance = sum(abundance)) |> 
+  dplyr::filter(minute <= 3) |> 
+  group_by(species, recording_id) |>
+  summarize(count = sum(count)) |> 
   group_by(species) |> 
   summarize(recordings=n()) |> 
   ungroup()
@@ -289,7 +288,7 @@ prf.maxf <- prfsp |>
   group_by(species) |> 
   dplyr::filter(threshold == max(threshold)) |> 
   ungroup() |> 
-  rename(better = classifier)
+  rename(better = classifier) 
 
 #4. Put together----
 app2 <- train  |> 
@@ -325,7 +324,8 @@ prfrate_f1score <- prfrate |>
   ungroup() |> 
   left_join(prfrate) |> 
   dplyr::select(species, f1score, precision, recall) |> 
-  rename(precision_f1score_activity = precision, recall_f1score_activity = recall, f1score_activity = f1score)
+  rename(precision_f1score_activity = precision, recall_f1score_activity = recall, f1score_activity = f1score) |> 
+  unique()
 
 #8. Get the dataset details----
 cr <- read.csv(file.path(root, "Data", "Evaluation", "SingleSpecies_all.csv")) |> 
@@ -347,10 +347,13 @@ cr.det <- cr |>
   rename(species = target)
 
 #8. Put together again----
+#round to 3 decimals
 app2b <- app2 |> 
+  left_join(cr.det) |> 
   left_join(prfrate_universal) |> 
   left_join(prfrate_f1score) |> 
-  left_join(cr.det)
+  mutate_at(vars(precision_universal:recall_fscore,
+                 precision_universal_activity:recall_f1score_activity), ~round(.x, 3))
 
 #5. Fix column names----
 colnames(app2b) <- c("Common name", "Species code", "Number of training clips", "Number of evaluation detections (minutes; community)", "Precision_universalthreshold (community)", "Recall _universalthreshold (community)", "F1score threshold (community)", "Precision_F1scorethreshold (community)", "Recall_F1scorethreshold (community)", "Classifier with highest F1score (community)", "Number of evaluation detections (calls; vocal activity)", "Precision_universalthreshold (vocal activity)", "Recall _universalthreshold (vocal activity)", "F1score threshold (vocal activity)", "Precision_F1scorethreshold (vocal activity)", "Recall_F1scorethreshold (vocal activity)")
@@ -360,25 +363,26 @@ write.csv(app2b, file.path(root, "Writing", "Appendix1.csv"), row.names = FALSE)
 
 #APPENDIX 3: HEURISTICS##########
 
-heuristic_cols <- brewer.pal(n=8, name = "Dark2")[c(1,2,3,6)]
+heuristic_cols <- brewer.pal(n=8, name = "Dark2")[c(1,2,3,6,8)]
 
 #1. Get data----
-heur_raw <- read.csv(file.path(root, "Results", "ExpertData", "pr_curves_for_heuristics.csv"))
+heur_raw <- read.csv(file.path(root, "Results", "ExpertData", "pr-curves-for-heuristics-2024-09-12.csv"))
 
 #2. Wrangle----
 heur <- heur_raw |> 
-  pivot_longer(base:all, names_to="heuristic", values_to="recall") |> 
-  mutate(heuristic = factor(heuristic, levels = c("base", "choose", "overlap", "all"), labels = c("Base", "Channel selection", "Above plus\nwindow overlap", "Above plus\nspecies pool\nadjustment")))
+  pivot_longer(base:filters, names_to="heuristic", values_to="recall") |> 
+  mutate(heuristic = factor(heuristic, levels = c("base", "choose", "overlap", "species.pool", "filters"), labels = c("Base", "Channel selection", "Above plus\nwindow overlap", "Above plus\nspecies pool\nadjustment", "Above plus\nbandpass\nfilters")))
 
 #3. Plot----
 ggplot(heur) + 
-  geom_line(aes(x=precision, y=recall, colour=heuristic), linewidth = 1) + 
+  geom_line(aes(x=precision, y=recall, colour=heuristic, linetype = heuristic), linewidth = 1) + 
   theme_classic() +
   ylab("Recall") + 
   xlab("Precision") +
   theme(legend.position = "right") +
   scale_colour_manual(name = "", values = heuristic_cols) +
-  ylim(c(0,1))
+  scale_linetype_manual(name = "", values = c("solid", "dashed", "dotted", "dotdash", "longdash")) +
+  ylim(c(0,1)) 
 
 #4. Save----
 ggsave(file.path(root, "Figures", "MS", "Appendix3_Heuristics.jpeg"), width = 7, height = 5)
@@ -489,9 +493,21 @@ table(dat$year)
 #3. Community performance----
 
 #precision cross over
+raw <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_All.csv"))
 prfrich <- read.csv(file.path(root, "Results", "ExpertData", "PRFRichness_Recording.csv"))
-prfsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF_Species.csv"))
-outsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF.csv"))
+prfsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF_Species.csv")) |> 
+  dplyr::filter(species %in% raw$species)
+outsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF.csv")) |> 
+  dplyr::filter(species %in% raw$species)
+
+ggplot(prfrich) + 
+  geom_line(aes(x=threshold, y=mn, colour=classifier), linewidth=1) + 
+  facet_wrap(~metric, scales="free") + 
+  scale_colour_manual(values=cols3, name="") +
+  theme_classic() +
+  ylab("Mean value per recording") + 
+  xlab("Score threshold") +
+  theme(legend.position = "bottom")
 
 prfrich |> 
   dplyr::select(-std) |> 
@@ -507,13 +523,25 @@ prfrich |>
 
 prfrich |> 
   dplyr::select(-std) |> 
+  dplyr::filter(metric=="recall") |> 
+  pivot_wider(names_from=classifier, values_from=mn) |> 
+  dplyr::filter(round(BirdNET, 1)==round(HawkEars, 1))
+
+prfrich |> 
+  dplyr::select(-std) |> 
+  dplyr::filter(metric=="recall") |> 
+  pivot_wider(names_from=classifier, values_from=mn) |> 
+  dplyr::filter(round(Perch, 1)==round(HawkEars, 1))
+
+prfrich |> 
+  dplyr::select(-std) |> 
   dplyr::filter(metric=="fscore") |> 
   pivot_wider(names_from=classifier, values_from=mn) |> 
   dplyr::filter(round(BirdNET, 1)==round(HawkEars, 1))
 
 #metric at 0.7 threshold
 prfrich |> 
-  dplyr::filter(classifier=="HawkEars", threshold==0.7)
+  dplyr::filter(classifier=="HawkEars", threshold==0.75)
 
 #max recall
 head(prfrich |> dplyr::filter(classifier=="HawkEars", metric=="recall"))
@@ -533,7 +561,7 @@ fscore |>
   dplyr::select(classifier, threshold) |> 
   left_join(prfrich, multiple="all")
 
-#species richness at precision of 0.7 threshold
+#species richness at precision of 0.75 threshold
 prfrich |> 
   dplyr::filter(round(mn, 2)==0.9,
                 metric=="precision") |> 
@@ -559,6 +587,9 @@ table(prf.maxf$species)
 
 #4. Call rate performance----
 
+prfrate <- read.csv(file.path(root, "Results", "SingleSpecies", "PRF.csv")) |> 
+  dplyr::filter(threshold >= 0.1)
+
 #max f1 score
 prfrate |> 
   group_by(species, classifier) |> 
@@ -571,6 +602,12 @@ prfrate |>
 prfrate |> 
   group_by(species, classifier) |> 
   summarize(precision = max(precision))
+
+#max precision
+prfrate |> 
+  group_by(species, classifier) |> 
+  summarize(recall = max(recall)) |> 
+  dplyr::filter(species=="RUGR")
 
 #recall at 90% precision
 prfrate |> 
