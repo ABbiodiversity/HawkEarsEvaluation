@@ -19,16 +19,18 @@ eval <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData.csv")) %>%
   dplyr::select(-GRAJ, -CHIK)
 
 #4. Get extra tags----
+#filter to just the species in the original data
 extra <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_extra_tags.csv")) %>% 
   mutate(count = 1,
          observer_id = 99) %>% 
-  rename(recording_id=recording, species = code)
+  rename(recording_id=recording, species = code) |> 
+  dplyr::filter(species %in% colnames(eval))
 
 #HAWKEARS##########
 
 #1. Get list of raw files----
-files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars-2024-08-01-with-location-date", "tags"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars-2024-08-01-with-location-date", "tags"))) %>% 
+files.he <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "HawkEars-2024-09-12-filters", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "HawkEars-2024-09-12-filters", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "filetype")) %>% 
   dplyr::select(path, recording_id)
 
@@ -45,8 +47,8 @@ for(i in 1:nrow(files.he)){
 #BIRDNET#########
 
 #1. Get list of raw files----
-files.bn <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "BirdNET", "tags"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "BirdNET", "tags"))) %>% 
+files.bn <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "BirdNET-2024-06-07", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "BirdNET-2024-06-07", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "results", "filetype")) %>% 
   rowwise() %>% 
   mutate(filesize = file.size(path)) %>% 
@@ -67,8 +69,8 @@ for(i in 1:nrow(files.bn)){
 #PERCH##########
 
 #1. Get list of raw fiels----
-files.pr <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "Perch", "tags"), full.names = TRUE),
-                       file = list.files(file.path(root, "Results", "ExpertData", "Perch", "tags"))) %>% 
+files.pr <- data.frame(path = list.files(file.path(root, "Results", "ExpertData", "Perch-2024-06-07", "tags"), full.names = TRUE),
+                       file = list.files(file.path(root, "Results", "ExpertData", "Perch-2024-06-07", "tags"))) %>% 
   separate(file, into=c("recording_id", "classifier", "results", "filetype")) %>% 
   rowwise() %>% 
   mutate(filesize = file.size(path)) %>% 
@@ -128,6 +130,8 @@ dat <- eval %>%
   dplyr::filter(count>0)
 
 table(dat$recording_id, dat$minute)
+
+write.csv(dat, file.path(root, "Data", "Evaluation", "ExpertData_All.csv"), row.names = FALSE)
 
 #6. Get list of evaluation data intervals----
 intervals <- dat |> 
