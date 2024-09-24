@@ -36,7 +36,7 @@ calculate_richness <- function(threshold, data){
 }
 
 #5. Set threshold sequence----
-threshold <- seq(0.1, 0.99, 0.01)
+threshold <- seq(0.01, 0.99, 0.01)
 
 #OVERALL METRICS##############
 
@@ -61,6 +61,9 @@ dat.pr <- min |>
          fn = ifelse(is.na(Perch) & detection==1, 1, 0)) |> 
   dplyr::select(-HawkEars, -BirdNET) |> 
   rename(confidence = Perch)
+
+ggplot(dat.bn) +
+  geom_histogram(aes(x=confidence, fill=factor(tp)))
 
 #2. Total detections----
 human_total <- sum(min$detection)
@@ -165,7 +168,8 @@ write.csv(out.min, file.path(root, "Results", "ExpertData", "PRFRichness_Recordi
 #1. Set up species loop----
 sp <- min |> 
   dplyr::select(species) |> 
-  unique()
+  unique() |> 
+  arrange(species)
 
 out.list <- list()
 prf.list <- list()
@@ -206,7 +210,7 @@ for(i in 1:nrow(sp)){
     mutate(thresh = "fscore")
   
   #6. Get universal threshold----
-  universe <- prf[prf$threshold==0.7,] |> 
+  universe <- prf[prf$threshold==0.75,] |> 
     mutate(thresh = "universal")
   
   #7. Get number of minutes----
