@@ -539,7 +539,7 @@ prfrich |>
   pivot_wider(names_from=classifier, values_from=mn) |> 
   dplyr::filter(round(BirdNET, 1)==round(HawkEars, 1))
 
-#metric at 0.7 threshold
+#metric at recommended threshold
 prfrich |> 
   dplyr::filter(classifier=="HawkEars", threshold==0.75)
 
@@ -563,7 +563,7 @@ fscore |>
 
 #species richness at precision of 0.75 threshold
 prfrich |> 
-  dplyr::filter(round(mn, 2)==0.9,
+  dplyr::filter(round(mn, 2)==0.79,
                 metric=="precision") |> 
   group_by(classifier) |> 
   dplyr::filter(threshold==min(threshold)) |> 
@@ -620,3 +620,44 @@ prfrate |>
   summarize(recallmn = mean(recall),
             recallsd = sd(recall))
 
+#Histograms for Sam-----
+
+#1. Get data----
+min <- read.csv(file.path(root, "Results", "ExpertData", "ExpertData_ByMinute.csv")) |> 
+  mutate(minute_id = paste0(recording_id, "_", minute))
+
+
+#2. Wrangle----
+dat.he <- min |> 
+  mutate(tp = ifelse(!is.na(HawkEars) & detection==1, 1, 0),
+         fp = ifelse(!is.na(HawkEars) & detection==0, 1, 0),
+         fn = ifelse(is.na(HawkEars) & detection==1, 1, 0)) |> 
+  dplyr::select(-BirdNET, -Perch) |> 
+  rename(confidence = HawkEars) |> 
+  mutate(classifier = "HawkEars")
+
+dat.bn <- min |> 
+  mutate(tp = ifelse(!is.na(BirdNET) & detection==1, 1, 0),
+         fp = ifelse(!is.na(BirdNET) & detection==0, 1, 0),
+         fn = ifelse(is.na(BirdNET) & detection==1, 1, 0)) |> 
+  dplyr::select(-HawkEars, -Perch) |> 
+  rename(confidence = BirdNET) |> 
+  mutate(classifier = "BirdNET")
+
+dat.pr <- min |> 
+  mutate(tp = ifelse(!is.na(Perch) & detection==1, 1, 0),
+         fp = ifelse(!is.na(Perch) & detection==0, 1, 0),
+         fn = ifelse(is.na(Perch) & detection==1, 1, 0)) |> 
+  dplyr::select(-HawkEars, -BirdNET) |> 
+  rename(confidence = Perch) |> 
+  mutate(classifier = "Perch")
+
+dat <- rbind(dat.he, dat.bn, dat.pr) |> 
+  dplyr::filter(confidence >= 0.01)
+
+ggplot(dat) +
+  geom_histogram(aes(x=confidence, fill = factor(tp))) +
+  facet_wrap(~classifier,scales = "free") +
+  scale_fill_manual(name = "Detection", labels = c("False positive", "True positive"), values = c("gold2", "cyan4"))
+
+ggsave(file.path(root, "Figures", "Exploration", "ScoreHistograms.jpeg"), width = 10, height = 4)
