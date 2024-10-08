@@ -257,10 +257,10 @@ ggsave(file.path(root, "Figures", "MS", "Figure4_CallRateFScore.jpeg"), width=9,
 #APPENDIX 1: SPECIES DETAILS COMMUNITY COMPOSITION######
 
 #1. Get data----
+raw <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_All.csv"))
 outsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF.csv")) |> 
   dplyr::filter(species %in% raw$species)
-train <- read.csv(file.path(root, "Results", "HawkEars-training-record-counts.csv"))
-raw <- read.csv(file.path(root, "Data", "Evaluation", "ExpertData_All.csv"))
+train <- read.csv(file.path(root, "Results", "HawkEars-training-record-counts-2024-09.csv"))
 prfsp <- read.csv(file.path(root, "Results", "ExpertData", "PRF_Species.csv")) |> 
   dplyr::filter(species %in% raw$species)
 
