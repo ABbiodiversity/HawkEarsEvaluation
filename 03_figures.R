@@ -52,7 +52,7 @@ ggplot() +
   theme(legend.position = "bottom")
 
 ## 2.5 Save ----
-ggsave("Figure3.jpeg", width=9, height = 10, units="in")
+ggsave("figures/Figure3.jpeg", width=9, height = 10, units="in")
 
 # 3. Figure 4 - Performance for vocal activity rate ----
 
@@ -77,7 +77,7 @@ ggplot(activity_out |> left_join(species)) +
   theme(legend.position = "bottom") +
   ylim(c(0,1))
 
-ggsave("Figure4.jpeg", width=9, height = 10, units="in")
+ggsave("figures/Figure4.jpeg", width=9, height = 10, units="in")
 
 # 4. Appendix D - Heuristics ----
 
@@ -101,6 +101,6 @@ ggplot(heur) +
   ylim(c(0,1)) 
 
 #4. Save----
-ggsave("AppendixD.jpeg", width = 7, height = 5, units="in")
+ggsave("figures/AppendixD.jpeg", width = 7, height = 5, units="in")
 
 ## end script ##
