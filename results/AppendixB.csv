@@ -1,0 +1,322 @@
+"Common name","Species code","Number of training clips","Number of evaluation detections (minutes; community)","Precision_universalthreshold (community)","Recall _universalthreshold (community)","F1score threshold (community)","Precision_F1scorethreshold (community)","Recall_F1scorethreshold (community)","Classifier with highest F1score (community)","Number of evaluation detections (calls; vocal activity)","Precision_universalthreshold (vocal activity)","Recall _universalthreshold (vocal activity)","F1score threshold (vocal activity)","Precision_F1scorethreshold (vocal activity)","Recall_F1scorethreshold (vocal activity)"
+"Acadian Flycatcher","ACFL",849,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Alder Flycatcher","ALFL",1514,106,0.979,0.443,0.21,0.8,0.755,"HawkEars",NA,NA,NA,NA,NA,NA
+"American Avocet","AMAV",1178,8,0.75,0.75,0.86,0.857,0.75,"HawkEars",NA,NA,NA,NA,NA,NA
+"American Bittern","AMBI",773,31,0.625,0.161,0.56,0.467,0.226,"Perch",NA,NA,NA,NA,NA,NA
+"American Coot","AMCO",899,85,1,0.165,0.09,0.521,0.576,"BirdNET",NA,NA,NA,NA,NA,NA
+"American Crow","AMCR",3518,54,0.9,0.333,0.45,0.769,0.556,"HawkEars",NA,NA,NA,NA,NA,NA
+"American Golden-Plover","AMGP",986,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"American Goldfinch","AGOL",2083,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"American Goshawk","AGOS",1180,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"American Kestrel","AMKE",844,6,1,0.833,0.56,1,0.833,"BirdNET",NA,NA,NA,NA,NA,NA
+"American Pipit","AMPI",776,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"American Redstart","AMRE",1494,49,0.64,0.327,0.71,0.621,0.367,"BirdNET",NA,NA,NA,NA,NA,NA
+"American Robin","AMRO",3340,126,0.839,0.373,0.42,0.619,0.619,"HawkEars",NA,NA,NA,NA,NA,NA
+"American Three-toed Woodpecker","ATTW",1154,8,0.833,0.625,0.47,0.833,0.625,"BirdNET",NA,NA,NA,NA,NA,NA
+"American Tree Sparrow","ATSP",1582,14,0.2,0.071,0.27,0.125,0.429,"BirdNET",NA,NA,NA,NA,NA,NA
+"American Wigeon","AMWI",753,15,1,0.333,0.33,0.7,0.467,"HawkEars",NA,NA,NA,NA,NA,NA
+"American Woodcock","AMWO",1446,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Anna's Hummingbird","ANHU",1611,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Arctic Tern","ARTE",1138,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Baird's Sandpiper","BASA",959,1,1,1,0.7,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Baird's Sparrow","BAIS",802,12,0.647,0.917,0.84,1,0.917,"HawkEars",NA,NA,NA,NA,NA,NA
+"Bald Eagle","BAEA",1708,5,0.333,0.4,0.76,0.4,0.4,"BirdNET",NA,NA,NA,NA,NA,NA
+"Baltimore Oriole","BAOR",1451,12,0.4,0.333,0.85,0.75,0.25,"HawkEars",NA,NA,NA,NA,NA,NA
+"Bank Swallow","BANS",651,10,1,0.1,0.29,0.462,0.6,"HawkEars",NA,NA,NA,NA,NA,NA
+"Barn Owl","BANO",637,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Barn Swallow","BARS",1087,11,0.727,0.727,0.86,1,0.727,"HawkEars",NA,NA,NA,NA,NA,NA
+"Barred Owl","BADO",948,10,0.75,0.3,0.57,0.8,0.4,"HawkEars",105,1,0.354,0.681,0.825,0.579
+"Bay-breasted Warbler","BBWA",740,15,0.75,0.6,0.65,0.769,0.667,"HawkEars",NA,NA,NA,NA,NA,NA
+"Bell's Vireo","BEVI",1228,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Belted Kingfisher","BEKI",680,10,0.5,0.1,0.56,0.75,0.3,"HawkEars",NA,NA,NA,NA,NA,NA
+"Bewick's Wren","BEWR",3184,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Black Tern","BLTE",1298,61,0.963,0.426,0.29,0.846,0.721,"HawkEars",NA,NA,NA,NA,NA,NA
+"Black-and-white Warbler","BAWW",1480,22,0.842,0.727,0.84,1,0.727,"HawkEars",NA,NA,NA,NA,NA,NA
+"Black-backed Woodpecker","BBWO",1225,8,0,0,0.15,0.154,0.75,"HawkEars",NA,NA,NA,NA,NA,NA
+"Black-bellied Plover","BBPL",1330,1,0,0,0.01,0,0,NA,NA,NA,NA,NA,NA,NA
+"Black-billed Cuckoo","BBCU",780,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Black-billed Magpie","BBMA",823,16,1,0.312,0.47,1,0.375,"BirdNET",NA,NA,NA,NA,NA,NA
+"Black-capped Chickadee","BCCH",3264,17,0.209,0.529,0.82,0.304,0.412,"HawkEars",NA,NA,NA,NA,NA,NA
+"Black-crowned Night Heron","BCNH",490,1,1,1,0.51,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Black-headed Grosbeak","BHGR",2439,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Black-throated Blue Warbler","BTBW",1031,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Black-throated Gray Warbler","BTGW",954,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Black-throated Green Warbler","BTNW",1316,13,0.75,0.462,0.46,0.6,0.923,"HawkEars",1547,0.855,0.555,0.686,0.804,0.598
+"Blackburnian Warbler","BLBW",847,10,0.833,0.5,0.54,0.8,0.8,"HawkEars",NA,NA,NA,NA,NA,NA
+"Blackpoll Warbler","BLPW",944,16,0.5,0.312,0.82,0.714,0.312,"HawkEars",NA,NA,NA,NA,NA,NA
+"Blue Jay","BLJA",2136,8,0.364,0.5,0.82,0.75,0.375,"HawkEars",NA,NA,NA,NA,NA,NA
+"Blue-gray Gnatcatcher","BGGN",1732,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Blue-headed Vireo","BHVI",1644,15,0.417,0.333,0.82,0.556,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Blue-winged Teal","BWTE",840,18,0.833,0.278,0.53,0.75,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Blue-winged Warbler","BWWA",798,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Bobolink","BOBO",1315,12,0.857,0.5,0.64,0.778,0.583,"HawkEars",NA,NA,NA,NA,NA,NA
+"Bohemian Waxwing","BOWA",1110,10,0.667,0.2,0.88,1,0.2,"HawkEars",NA,NA,NA,NA,NA,NA
+"Bonaparte's Gull","BOGU",788,26,0.833,0.192,0.25,0.424,0.538,"HawkEars",NA,NA,NA,NA,NA,NA
+"Boreal Chickadee","BOCH",2499,13,0.857,0.462,0.72,0.8,0.615,"HawkEars",NA,NA,NA,NA,NA,NA
+"Boreal Owl","BOOW",1116,1,NA,0,0.01,0,0,"BirdNET",NA,NA,NA,NA,NA,NA
+"Brant","BRAN",1554,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Brewer's Blackbird","BRBL",1567,7,0.5,0.571,0.83,0.667,0.571,"HawkEars",NA,NA,NA,NA,NA,NA
+"Brewer's Sparrow","BRSP",1590,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Broad-winged Hawk","BWHA",843,8,0.833,0.625,0.82,1,0.625,"BirdNET",NA,NA,NA,NA,NA,NA
+"Brown Creeper","BRCR",1976,15,0.692,0.6,0.84,0.9,0.6,"HawkEars",NA,NA,NA,NA,NA,NA
+"Brown Thrasher","BRTH",2358,3,0.25,0.333,0.85,1,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Brown-headed Cowbird","BHCO",1644,38,0.87,0.526,0.73,0.875,0.553,"HawkEars",NA,NA,NA,NA,NA,NA
+"Bufflehead","BUFF",520,6,0.5,0.167,0.7,0.667,0.333,"BirdNET",NA,NA,NA,NA,NA,NA
+"California Gull","CAGU",4025,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"California Quail","CAQU",1439,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Canada Goose","CANG",1508,55,0.958,0.418,0.57,0.897,0.473,"HawkEars",NA,NA,NA,NA,NA,NA
+"Canada Jay","CAJA",839,8,0,0,0.28,0.067,0.125,"BirdNET",NA,NA,NA,NA,NA,NA
+"Canada Warbler","CAWA",1197,7,0.667,0.286,0.9,1,0.286,"HawkEars",NA,NA,NA,NA,NA,NA
+"Cape May Warbler","CMWA",706,19,0.9,0.474,0.72,0.9,0.474,"HawkEars",NA,NA,NA,NA,NA,NA
+"Carolina Wren","CARW",2099,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Caspian Tern","CATE",850,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Cassin's Vireo","CAVI",1800,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Cedar Waxwing","CEDW",1237,19,0.75,0.474,0.69,0.769,0.526,"HawkEars",NA,NA,NA,NA,NA,NA
+"Cerulean Warbler","CERW",976,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Chestnut-backed Chickadee","CBCH",2478,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Chestnut-collared Longspur","CCLO",1019,3,NA,0,0.19,0.097,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Chestnut-sided Warbler","CSWA",1038,1,0.333,1,0.79,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Chimney Swift","CHSW",705,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Chipping Sparrow","CHSP",1433,151,0.926,0.417,0.55,0.757,0.517,"HawkEars",NA,NA,NA,NA,NA,NA
+"Chuck-will's-widow","CWWI",656,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Clark's Nutcracker","CLNU",889,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Clay-colored Sparrow","CCSP",1169,111,0.906,0.432,0.52,0.849,0.559,"HawkEars",NA,NA,NA,NA,NA,NA
+"Cliff Swallow","CLSW",1063,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Common Gallinule","COGA",1438,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Common Goldeneye","COGO",711,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Common Grackle","COGR",1812,12,0.556,0.417,0.62,0.571,0.667,"HawkEars",NA,NA,NA,NA,NA,NA
+"Common Loon","COLO",986,33,1,0.273,0.25,0.857,0.545,"HawkEars",NA,NA,NA,NA,NA,NA
+"Common Merganser","COME",522,1,NA,0,0.02,0.002,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Common Nighthawk","CONI",821,11,1,0.455,0.57,1,0.545,"HawkEars",NA,NA,NA,NA,NA,NA
+"Common Poorwill","COPO",1178,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Common Raven","CORA",3948,42,0.706,0.286,0.68,0.636,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Common Redpoll","CORE",1043,4,0,0,0.12,0.024,0.75,"HawkEars",NA,NA,NA,NA,NA,NA
+"Common Tern","COTE",1478,10,NA,0,0.26,0.333,0.4,"HawkEars",NA,NA,NA,NA,NA,NA
+"Common Yellowthroat","COYE",2282,115,0.987,0.661,0.58,0.928,0.783,"HawkEars",204,0.984,0.545,0.8,0.816,0.784
+"Connecticut Warbler","CONW",1423,19,1,0.632,0.64,1,0.632,"HawkEars",NA,NA,NA,NA,NA,NA
+"Cooper's Hawk","COHA",919,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Dark-eyed Junco","DEJU",2674,90,0.591,0.433,0.54,0.436,0.722,"HawkEars",NA,NA,NA,NA,NA,NA
+"Dickcissel","DICK",687,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Double-crested Cormorant","DCCO",524,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Downy Woodpecker","DOWO",1449,9,NA,0,0.6,1,0.111,"HawkEars",NA,NA,NA,NA,NA,NA
+"Dunlin","DUNL",1080,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Dusky Flycatcher","DUFL",1640,13,1,0.846,0.73,1,0.846,"HawkEars",NA,NA,NA,NA,NA,NA
+"Eared Grebe","EAGR",518,13,0.667,0.462,0.79,0.75,0.462,"HawkEars",NA,NA,NA,NA,NA,NA
+"Eastern Bluebird","EABL",977,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Eastern Kingbird","EAKI",1551,22,0.941,0.727,0.83,1,0.727,"HawkEars",NA,NA,NA,NA,NA,NA
+"Eastern Meadowlark","EAME",1313,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Eastern Phoebe","EAPH",1506,9,1,0.333,0.75,1,0.333,"BirdNET",NA,NA,NA,NA,NA,NA
+"Eastern Screech-Owl","EASO",818,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Eastern Towhee","EATO",2142,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Eastern Whip-poor-will","EWPW",1572,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Eastern Wood-Pewee","EAWP",1536,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Eurasian Collared-Dove","EUCD",889,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"European Starling","EUST",1572,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Evening Grosbeak","EVGR",1255,9,0.4,0.222,0.68,0.429,0.333,"Perch",NA,NA,NA,NA,NA,NA
+"Field Sparrow","FISP",1849,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Forster's Tern","FOTE",698,14,1,0.357,0.24,0.529,0.643,"HawkEars",NA,NA,NA,NA,NA,NA
+"Fox Sparrow","FOSP",1054,12,0.625,0.417,0.53,0.667,0.667,"HawkEars",NA,NA,NA,NA,NA,NA
+"Franklin's Gull","FRGU",1303,12,0.6,0.25,0.17,0.421,0.667,"HawkEars",NA,NA,NA,NA,NA,NA
+"Gadwall","GADW",862,12,1,0.25,0.65,1,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Golden Eagle","GOEA",913,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Golden-crowned Kinglet","GCKI",1853,22,0.737,0.636,0.71,0.737,0.636,"HawkEars",NA,NA,NA,NA,NA,NA
+"Golden-crowned Sparrow","GCSP",2094,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Golden-winged Warbler","GWWA",790,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Grasshopper Sparrow","GRSP",1148,9,0,0,0.03,0.065,0.222,"BirdNET",NA,NA,NA,NA,NA,NA
+"Gray Catbird","GRCA",2168,13,0.733,0.846,0.86,1,0.846,"HawkEars",NA,NA,NA,NA,NA,NA
+"Gray Flycatcher","GRFL",1244,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Gray Partridge","GRAP",1371,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Gray-cheeked Thrush","GCTH",1232,6,NA,0,0.35,0.1,0.167,"BirdNET",NA,NA,NA,NA,NA,NA
+"Great Black-backed Gull","GBBG",1657,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Great Blue Heron","GBHE",1075,4,1,0.5,0.74,1,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Great Crested Flycatcher","GCFL",1478,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Great Egret","GREG",639,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Great Gray Owl","GGOW",1290,6,0,0,0.27,0.125,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Great Horned Owl","GHOW",1334,10,0.833,0.5,0.79,1,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Greater White-fronted Goose","GWFG",1761,7,0.4,0.286,0.77,0.667,0.286,"HawkEars",NA,NA,NA,NA,NA,NA
+"Greater Yellowlegs","GRYE",1256,21,1,0.524,0.71,1,0.571,"HawkEars",NA,NA,NA,NA,NA,NA
+"Green Heron","GRHE",1057,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Green-winged Teal","GWTE",882,12,0.4,0.167,0.58,0.333,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Hairy Woodpecker","HAWO",1542,10,0,0,0.15,0.028,0.2,"Perch",NA,NA,NA,NA,NA,NA
+"Harris's Sparrow","HASP",1067,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Henslow's Sparrow","HESP",1145,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Hermit Thrush","HETH",2285,101,0.673,0.653,0.88,0.918,0.554,"HawkEars",NA,NA,NA,NA,NA,NA
+"Herring Gull","HERG",1428,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Hooded Merganser","HOME",276,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Hooded Warbler","HOWA",1061,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Horned Grebe","HOGR",634,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Horned Lark","HOLA",1649,21,0.933,0.667,0.75,0.933,0.667,"HawkEars",NA,NA,NA,NA,NA,NA
+"House Finch","HOFI",1757,3,0,0,0.23,0.01,0.667,"BirdNET",NA,NA,NA,NA,NA,NA
+"House Sparrow","HOSP",1043,7,0.571,0.571,0.85,1,0.571,"HawkEars",NA,NA,NA,NA,NA,NA
+"House Wren","HOWR",2152,67,0.946,0.522,0.73,0.946,0.522,"HawkEars",NA,NA,NA,NA,NA,NA
+"Indigo Bunting","INBU",1495,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Kentucky Warbler","KEWA",912,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Killdeer","KILL",880,15,0.818,0.6,0.44,0.688,0.733,"HawkEars",NA,NA,NA,NA,NA,NA
+"Kirtland's Warbler","KIWA",1289,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Lapland Longspur","LALO",1540,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Lark Sparrow","LASP",1306,2,0,0,0.16,0.017,1,"BirdNET",NA,NA,NA,NA,NA,NA
+"Lazuli Bunting","LAZB",935,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"LeConte's Sparrow","LCSP",926,130,0.976,0.623,0.38,0.95,0.731,"HawkEars",NA,NA,NA,NA,NA,NA
+"Least Bittern","LEBI",629,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Least Flycatcher","LEFL",752,51,1,0.373,0.2,0.881,0.725,"HawkEars",NA,NA,NA,NA,NA,NA
+"Least Sandpiper","LESA",1324,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Lesser Black-backed Gull","LBBG",1150,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Lesser Yellowlegs","LEYE",858,17,0.778,0.412,0.69,0.818,0.529,"HawkEars",NA,NA,NA,NA,NA,NA
+"Lincoln's Sparrow","LISP",1808,141,0.929,0.461,0.48,0.784,0.645,"HawkEars",NA,NA,NA,NA,NA,NA
+"Loggerhead Shrike","LOSH",1450,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Long-billed Curlew","LBCU",1577,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Long-billed Dowitcher","LBDO",827,1,0.25,1,0.92,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Long-eared Owl","LEOW",1475,4,1,0.5,0.47,1,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Long-tailed Duck","LTDU",1690,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Louisiana Waterthrush","LOWA",774,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"MacGillivray's Warbler","MGWA",1693,1,0,0,0.01,0,0,"BirdNET",NA,NA,NA,NA,NA,NA
+"Magnolia Warbler","MAWA",1190,36,1,0.5,0.74,1,0.528,"HawkEars",NA,NA,NA,NA,NA,NA
+"Mallard","MALL",1109,22,1,0.091,0.17,0.4,0.364,"HawkEars",NA,NA,NA,NA,NA,NA
+"Marbled Godwit","MAGO",1071,4,NA,0,0.27,1,0.75,"HawkEars",NA,NA,NA,NA,NA,NA
+"Marsh Wren","MAWR",1559,32,0.862,0.781,0.84,0.96,0.75,"HawkEars",NA,NA,NA,NA,NA,NA
+"Merlin","MERL",1024,3,0,0,0.53,0.167,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Mountain Bluebird","MOBL",1162,11,0.667,0.182,0.71,0.75,0.273,"HawkEars",NA,NA,NA,NA,NA,NA
+"Mountain Chickadee","MOCH",3528,3,0.143,0.333,0.82,0.333,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Mourning Dove","MODO",922,42,0.846,0.262,0.58,0.812,0.31,"BirdNET",NA,NA,NA,NA,NA,NA
+"Mourning Warbler","MOWA",1228,23,1,0.478,0.63,0.739,0.739,"HawkEars",NA,NA,NA,NA,NA,NA
+"Mute Swan","MUSW",779,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Nashville Warbler","NAWA",1097,10,0.25,0.2,0.35,0.231,0.6,"HawkEars",NA,NA,NA,NA,NA,NA
+"Nelson's Sparrow","NESP",789,13,0.6,0.462,0.87,1,0.385,"HawkEars",NA,NA,NA,NA,NA,NA
+"Northern Cardinal","NOCA",2189,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Northern Flicker","NOFL",1968,11,1,0.091,0.35,0.235,0.364,"HawkEars",NA,NA,NA,NA,NA,NA
+"Northern Harrier","NOHA",1462,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Northern Hawk Owl","NHOW",813,6,1,0.5,0.39,0.833,0.833,"HawkEars",NA,NA,NA,NA,NA,NA
+"Northern Parula","NOPA",823,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Northern Pintail","NOPI",833,9,0.556,0.556,0.81,0.714,0.556,"HawkEars",NA,NA,NA,NA,NA,NA
+"Northern Pygmy-Owl","NOPO",942,1,NA,0,0.01,0,0,"BirdNET",NA,NA,NA,NA,NA,NA
+"Northern Rough-winged Swallow","NRWS",894,3,0,0,0.65,0.25,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Northern Saw-whet Owl","NSWO",1599,9,1,0.333,0.67,1,0.444,"HawkEars",NA,NA,NA,NA,NA,NA
+"Northern Shoveler","NSHO",527,10,0.5,0.1,0.3,0.3,0.3,"BirdNET",NA,NA,NA,NA,NA,NA
+"Northern Shrike","NSHR",1471,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Northern Waterthrush","NOWA",1171,20,0.917,0.55,0.71,0.933,0.7,"HawkEars",NA,NA,NA,NA,NA,NA
+"Olive-sided Flycatcher","OSFL",920,11,0.556,0.455,0.89,0.833,0.455,"HawkEars",445,0.977,0.726,0.852,0.957,0.768
+"Orange-crowned Warbler","OCWA",1200,12,0.312,0.417,0.89,1,0.417,"HawkEars",NA,NA,NA,NA,NA,NA
+"Orchard Oriole","OROR",807,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Osprey","OSPR",908,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Ovenbird","OVEN",2050,100,0.93,0.8,0.68,0.916,0.87,"HawkEars",1240,0.933,0.748,0.834,0.924,0.76
+"Pacific Wren","PAWR",3330,3,1,1,0.73,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Pacific-slope Flycatcher","PSFL",2123,7,1,0.143,0.63,1,0.571,"HawkEars",NA,NA,NA,NA,NA,NA
+"Palm Warbler","PAWA",1041,40,0.929,0.325,0.36,0.719,0.575,"HawkEars",NA,NA,NA,NA,NA,NA
+"Pectoral Sandpiper","PESA",556,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Peregrine Falcon","PEFA",715,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Philadelphia Vireo","PHVI",2316,15,0.2,0.333,0.89,0.417,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Pied-billed Grebe","PBGR",842,26,1,0.385,0.56,0.846,0.423,"HawkEars",NA,NA,NA,NA,NA,NA
+"Pileated Woodpecker","PIWO",1655,8,0.333,0.125,0.6,0.5,0.25,"HawkEars",NA,NA,NA,NA,NA,NA
+"Pine Grosbeak","PIGR",635,11,0,0,0.05,0.003,0.091,"Perch",NA,NA,NA,NA,NA,NA
+"Pine Siskin","PISI",1335,17,0.833,0.294,0.62,0.7,0.412,"HawkEars",NA,NA,NA,NA,NA,NA
+"Pine Warbler","PIWA",704,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Prairie Warbler","PRAW",710,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Prothonotary Warbler","PROW",977,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Purple Finch","PUFI",1578,11,0.238,0.455,0.94,1,0.273,"BirdNET",NA,NA,NA,NA,NA,NA
+"Purple Martin","PUMA",797,7,0.857,0.857,0.8,1,0.857,"HawkEars",NA,NA,NA,NA,NA,NA
+"Red Crossbill","RECR",1610,3,0,0,0.22,0.005,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Red-bellied Woodpecker","RBWO",1229,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Red-breasted Nuthatch","RBNU",1955,11,1,0.364,0.54,1,0.455,"HawkEars",NA,NA,NA,NA,NA,NA
+"Red-eyed Vireo","REVI",2497,97,0.9,0.464,0.42,0.691,0.691,"HawkEars",NA,NA,NA,NA,NA,NA
+"Red-headed Woodpecker","RHWO",637,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Red-naped Sapsucker","RNSA",1219,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Red-necked Grebe","RNGR",1031,52,0.895,0.327,0.53,0.84,0.404,"HawkEars",NA,NA,NA,NA,NA,NA
+"Red-necked Phalarope","RNPH",978,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Red-shouldered Hawk","RSHA",564,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Red-tailed Hawk","RTHA",656,2,0,0,0.55,0.2,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Red-throated Loon","RTLO",2633,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Red-winged Blackbird","RWBL",2403,161,0.944,0.416,0.37,0.712,0.615,"BirdNET",NA,NA,NA,NA,NA,NA
+"Redhead","REDH",500,6,0.75,0.5,0.87,1,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Ring-billed Gull","RBGU",1245,9,1,0.222,0.65,0.75,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Ring-necked Duck","RNDU",605,8,0.5,0.25,0.57,0.667,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Ring-necked Pheasant","RNEP",1052,10,1,0.2,0.41,1,0.2,"BirdNET",NA,NA,NA,NA,NA,NA
+"Rock Pigeon","ROPI",706,8,0.667,0.25,0.24,0.429,0.375,"HawkEars",NA,NA,NA,NA,NA,NA
+"Rock Wren","ROWR",1444,1,1,1,0.68,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Rose-breasted Grosbeak","RBGR",1502,20,0.55,0.55,0.84,0.833,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Rough-legged Hawk","RLHA",558,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Ruby-crowned Kinglet","RCKI",1557,47,0.952,0.426,0.4,0.738,0.66,"HawkEars",NA,NA,NA,NA,NA,NA
+"Ruby-throated Hummingbird","RTHU",683,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Ruddy Duck","RUDU",407,4,NA,0,0.11,0.667,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Ruddy Turnstone","RUTU",1306,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Ruffed Grouse","RUGR",234,35,0.938,0.857,0.72,0.938,0.857,"HawkEars",1677,0.976,0.581,0.774,0.875,0.694
+"Rufous Hummingbird","RUHU",1032,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Rusty Blackbird","RUBL",1442,10,0.364,0.4,0.82,0.667,0.4,"HawkEars",NA,NA,NA,NA,NA,NA
+"Sanderling","SAND",1290,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Sandhill Crane","SACR",1209,17,1,0.471,0.45,1,0.529,"HawkEars",NA,NA,NA,NA,NA,NA
+"Savannah Sparrow","SAVS",1544,105,0.971,0.638,0.42,0.863,0.781,"HawkEars",NA,NA,NA,NA,NA,NA
+"Say's Phoebe","SAPH",1050,1,NA,0,0.01,0,0,"BirdNET",NA,NA,NA,NA,NA,NA
+"Scarlet Tanager","SCTA",1534,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Sedge Wren","SEWR",2032,33,0.85,0.515,0.78,0.895,0.515,"HawkEars",NA,NA,NA,NA,NA,NA
+"Semipalmated Plover","SEPL",1185,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Semipalmated Sandpiper","SESA",849,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Sharp-shinned Hawk","SSHA",874,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Sharp-tailed Grouse","STGR",827,6,1,0.333,0.28,0.667,0.667,"HawkEars",NA,NA,NA,NA,NA,NA
+"Short-billed Dowitcher","SBDO",617,10,0.4,0.2,0.82,0.667,0.2,"HawkEars",NA,NA,NA,NA,NA,NA
+"Short-eared Owl","SEOW",669,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Snow Bunting","SNBU",1057,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Snow Goose","SNGO",1409,8,0.5,0.125,0.37,0.4,0.25,"HawkEars",NA,NA,NA,NA,NA,NA
+"Solitary Sandpiper","SOSA",805,13,0.316,0.462,0.64,0.333,0.538,"HawkEars",NA,NA,NA,NA,NA,NA
+"Song Sparrow","SOSP",2537,45,0.686,0.533,0.74,0.686,0.533,"HawkEars",NA,NA,NA,NA,NA,NA
+"Sora","SORA",1632,97,0.886,0.32,0.48,0.783,0.485,"HawkEars",NA,NA,NA,NA,NA,NA
+"Spotted Sandpiper","SPSA",1608,13,0.25,0.231,0.62,0.185,0.385,"BirdNET",NA,NA,NA,NA,NA,NA
+"Spotted Towhee","SPTO",1410,8,0.833,0.625,0.6,0.833,0.625,"HawkEars",NA,NA,NA,NA,NA,NA
+"Sprague's Pipit","SPPI",915,14,0.75,0.214,0.33,0.857,0.429,"HawkEars",NA,NA,NA,NA,NA,NA
+"Steller's Jay","STJA",1081,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Summer Tanager","SUTA",912,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Swainson's Hawk","SWHA",862,1,0.5,1,0.81,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Swainson's Thrush","SWTH",1692,146,0.937,0.404,0.41,0.835,0.658,"HawkEars",2064,0.607,0.591,0.6,0.615,0.586
+"Swamp Sparrow","SWSP",1746,112,0.625,0.848,0.85,0.758,0.812,"HawkEars",NA,NA,NA,NA,NA,NA
+"Tennessee Warbler","TEWA",1447,149,1,0.53,0.23,0.929,0.698,"HawkEars",10899,0.966,0.697,0.868,0.88,0.855
+"Thick-billed Longspur","TBLO",1662,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Townsend's Solitaire","TOSO",2004,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Townsend's Warbler","TOWA",1029,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Tree Swallow","TRES",1574,52,0.905,0.365,0.41,0.8,0.538,"HawkEars",NA,NA,NA,NA,NA,NA
+"Trumpeter Swan","TRUS",989,3,1,1,0.75,1,1,"BirdNET",NA,NA,NA,NA,NA,NA
+"Tufted Titmouse","TUTI",1911,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Tundra Swan","TUSW",1421,1,0.111,1,0.88,0.5,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Upland Sandpiper","UPSA",675,10,0.667,0.2,0.17,0.4,0.4,"HawkEars",NA,NA,NA,NA,NA,NA
+"Varied Thrush","VATH",935,9,0.833,0.556,0.69,0.833,0.556,"HawkEars",NA,NA,NA,NA,NA,NA
+"Veery","VEER",1454,12,0.9,0.75,0.55,0.846,0.917,"HawkEars",NA,NA,NA,NA,NA,NA
+"Vesper Sparrow","VESP",1008,63,1,0.571,0.52,0.887,0.746,"HawkEars",NA,NA,NA,NA,NA,NA
+"Violet-green Swallow","VGSW",1882,2,0.4,1,0.85,1,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Virginia Rail","VIRA",1162,17,1,0.353,0.39,0.643,0.529,"HawkEars",NA,NA,NA,NA,NA,NA
+"Warbling Vireo","WAVI",2998,27,0.8,0.593,0.83,1,0.556,"HawkEars",NA,NA,NA,NA,NA,NA
+"Western Grebe","WEGR",805,10,0.75,0.3,0.6,0.714,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"Western Kingbird","WEKI",1618,1,0.5,1,0.5,0.5,1,"HawkEars",NA,NA,NA,NA,NA,NA
+"Western Meadowlark","WEME",1662,79,0.957,0.848,0.77,0.985,0.835,"HawkEars",NA,NA,NA,NA,NA,NA
+"Western Tanager","WETA",1291,26,0.875,0.269,0.33,0.556,0.577,"HawkEars",NA,NA,NA,NA,NA,NA
+"Western Wood-Pewee","WEWP",1469,11,0.8,0.364,0.6,0.667,0.545,"HawkEars",NA,NA,NA,NA,NA,NA
+"Whimbrel","WHIM",1297,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"White-breasted Nuthatch","WBNU",2172,4,1,0.5,0.46,1,0.5,"HawkEars",NA,NA,NA,NA,NA,NA
+"White-crowned Sparrow","WCSP",2509,15,0.8,0.533,0.9,1,0.533,"HawkEars",NA,NA,NA,NA,NA,NA
+"White-eyed Vireo","WEVI",1771,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"White-rumped Sandpiper","WRSA",315,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"White-throated Sparrow","WTSP",2488,221,0.966,0.647,0.49,0.846,0.769,"HawkEars",3348,0.968,0.601,0.854,0.88,0.831
+"White-winged Crossbill","WWCR",1270,9,0.214,0.333,0.86,0.5,0.333,"HawkEars",NA,NA,NA,NA,NA,NA
+"Wild Turkey","WITU",868,1,NA,0,0.01,0,0,NA,NA,NA,NA,NA,NA,NA
+"Willet","WILL",2624,9,0.889,0.889,0.77,1,0.889,"HawkEars",NA,NA,NA,NA,NA,NA
+"Willow Flycatcher","WIFL",870,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Willow Ptarmigan","WIPT",609,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wilson's Phalarope","WIPH",591,13,0.8,0.308,0.61,0.778,0.538,"HawkEars",NA,NA,NA,NA,NA,NA
+"Wilson's Snipe","WISN",1019,109,1,0.505,0.33,0.921,0.642,"HawkEars",NA,NA,NA,NA,NA,NA
+"Wilson's Warbler","WIWA",1210,17,0.818,0.529,0.58,0.688,0.647,"HawkEars",NA,NA,NA,NA,NA,NA
+"Winter Wren","WIWR",2652,51,0.943,0.647,0.71,0.878,0.706,"HawkEars",NA,NA,NA,NA,NA,NA
+"Wood Duck","WODU",701,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wood Thrush","WOTH",2128,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Yellow Rail","YERA",1208,29,1,0.621,0.27,0.913,0.724,"HawkEars",NA,NA,NA,NA,NA,NA
+"Yellow Warbler","YEWA",1715,36,0.811,0.833,0.75,0.811,0.833,"HawkEars",NA,NA,NA,NA,NA,NA
+"Yellow-bellied Flycatcher","YBFL",1561,10,0.25,0.1,0.84,1,0.1,"BirdNET",NA,NA,NA,NA,NA,NA
+"Yellow-bellied Sapsucker","YBSA",1110,30,0.75,0.2,0.32,0.846,0.367,"HawkEars",NA,NA,NA,NA,NA,NA
+"Yellow-billed Cuckoo","YBCU",668,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Yellow-breasted Chat","YBCH",1079,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Yellow-headed Blackbird","YHBL",1703,51,0.913,0.412,0.52,0.775,0.608,"HawkEars",NA,NA,NA,NA,NA,NA
+"Yellow-rumped Warbler","YRWA",3192,104,0.742,0.663,0.73,0.735,0.692,"HawkEars",NA,NA,NA,NA,NA,NA
+"Yellow-throated Vireo","YTVI",1976,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Yellow-throated Warbler","YTWA",865,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"","Average",1320.8,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"","Minimum",234,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"","Maximum",4025,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"","Total",414718,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Note: excludes non-bird categories and training data for separate Ruffed Grouse classifier","",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
