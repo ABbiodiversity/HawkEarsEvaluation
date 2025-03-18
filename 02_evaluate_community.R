@@ -13,7 +13,7 @@
 library(tidyverse) # data manipulation and visualization
 
 ## 1.2 Read in detections and annotations file ----
-dat <- read.csv("Community_ByMinute.csv") |> 
+dat <- read.csv("data/community_minute.csv") |> 
   unique()
 
 ## 1.3 Load evaluation functions ----
@@ -139,7 +139,7 @@ ggplot(minutes_summary) +
   facet_wrap(~metric, scales="free")
 
 ## 4.11 Save-----
-write.csv(minutes_out, "Evaluation_community_recording.csv", row.names = FALSE)
+write.csv(minutes_out, "results/Evaluation_community_recording.csv", row.names = FALSE)
 
 # 5. Evaluation per species ----
 
@@ -229,7 +229,7 @@ appendix_out <- do.call(rbind, appendix.list) |>
   arrange(species)
 
 ## 5.12 Save ----
-write.csv(species_out, "Evaluation_community_species.csv", row.names = FALSE)
-write.csv(appendix_out, "Evaluation_community_appendix.csv", row.names = FALSE)
+write.csv(species_out, "results/Evaluation_community_species.csv", row.names = FALSE)
+write.csv(appendix_out, "results/Evaluation_community_appendix.csv", row.names = FALSE)
 
 ## end script ##

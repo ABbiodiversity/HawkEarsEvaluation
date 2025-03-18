@@ -11,13 +11,13 @@
 library(tidyverse)
 
 ## 1.2 Get inputs ----
-annotations_community <- read.csv("annotations_community.csv")
-files_community <- read.csv("filelist_community.csv") |> 
+annotations_community <- read.csv("data/annotations_community.csv")
+files_community <- read.csv("data/filelist_community.csv") |> 
   unique()
-minutes <- read.csv("Evaluation_community_recording.csv")
-dat <- read.csv("Community_ByMinute.csv")
-appendix <- read.csv("AppendixB.csv")
-activity <- read.csv("Evaluation_vocalactivity.csv") |> 
+minutes <- read.csv("results/Evaluation_community_recording.csv")
+dat <- read.csv("data/community_minute.csv")
+appendix <- read.csv("results/AppendixB.csv")
+activity <- read.csv("results/Evaluation_vocalactivity.csv") |> 
   dplyr::filter(threshold >= 0.1)
 
 # 2. Describe community dataset ----

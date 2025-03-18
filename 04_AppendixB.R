@@ -11,11 +11,11 @@
 library(tidyverse)
 
 ## 1.2 Get inputs ----
-dat <- read.csv("Multispecies_ByMinute.csv")
-train <- read.csv("HawkEars-training-record-counts-2024-09.csv")
-appendix <- read.csv("Evaluation_community_appendix.csv")
-species <- read.csv("Evaluation_community_species.csv")
-activity <- read.csv("Evaluation_vocalactivity.csv") |> 
+dat <- read.csv("data/community_minute.csv")
+train <- read.csv("data/HawkEars-training-record-counts-2024-09.csv")
+appendix <- read.csv("results/Evaluation_community_appendix.csv")
+species <- read.csv("results/Evaluation_community_species.csv")
+activity <- read.csv("results/Evaluation_vocalactivity.csv") |> 
   dplyr::filter(threshold >= 0.1) |> 
   rename(fscore = f1score)
 
@@ -40,7 +40,7 @@ species_fscore <- species |>
 # 3. Determine metrics for vocal activity dataset ----
 
 ## 3.1 Read in the annotations ----
-files_activity <- list.files("annotations_vocalactivity", full.names = TRUE)
+files_activity <- list.files("data/annotations_vocalactivity", full.names = TRUE)
 annotations_activity <- map_dfr(read.csv, .x=files_activity)
 
 ## 3.2 Get annotation sample sizes ----

@@ -17,7 +17,7 @@ library(tidyverse) # data manipulation and visualization
 setwd(dirname(getwd()))
 
 ## 1.3 Read in annotations ----
-ann <- read.csv(file.path("HawkEarsEvaluation", "annotations.csv"))
+ann <- read.csv(file.path("HawkEarsEvaluation", "data", "annotations.csv"))
 
 # 2. Read in HawkEars output ----
 
@@ -127,6 +127,6 @@ out <- full_join(minute3, ann_sp, multiple="all") |>
   mutate(detection = ifelse(is.na(detection), 0, 1),
          minute_id = paste0(recording, "_", minute))
 
-write.csv(out, file.path("HawkEarsEvaluation", "Community_ByMinute.csv"), row.names = FALSE)
+write.csv(out, file.path("HawkEarsEvaluation", "data", "community_minute.csv"), row.names = FALSE)
 
 ## end script ##

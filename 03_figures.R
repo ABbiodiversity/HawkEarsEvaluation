@@ -2,7 +2,7 @@
 # title: "03 figures for manuscript"
 # author: "Elly Knight"
 # date: "2025-03-18"
-# inputs: "evaluation output from `02_evaluate_community.R" and from python evaluation script in HawkEars repo for vocal activity dataset
+# inputs: "evaluation output from `02_evaluate_community.R" and from python evaluation script in HawkEars repo for vocal activity dataset and heuristics"
 # outputs: "figures for manuscript"
 
 # ---
@@ -20,7 +20,7 @@ heuristic_cols <- brewer.pal(n=8, name = "Dark2")[c(1,2,3,6,8)]
 # 2. Figure 3 - Performance for community dataset per recording minute ----
 
 ## 2.1 Read in the evaluation ----
-minutes_out <- read.csv("Evaluation_community_recording.csv")
+minutes_out <- read.csv("results/Evaluation_community_recording.csv")
 
 ## 2.2 Summarize to mean ----
 minutes_summary <- minutes_out |> 
@@ -57,7 +57,7 @@ ggsave("figures/Figure3.jpeg", width=9, height = 10, units="in")
 # 3. Figure 4 - Performance for vocal activity rate ----
 
 ## 3.1 Read in evaluation results ----
-activity_out <- read.csv("Evaluation_vocalactivity.csv") |> 
+activity_out <- read.csv("results/Evaluation_vocalactivity.csv") |> 
   dplyr::filter(threshold >= 0.1)
 
 ## 3.2 Make a dataframe of species names and codes ----
@@ -82,7 +82,7 @@ ggsave("figures/Figure4.jpeg", width=9, height = 10, units="in")
 # 4. Appendix D - Heuristics ----
 
 ## 4.1 Read in heuristics evaluation ----
-heur_raw <- read.csv("Evaluation_community_heuristics.csv")
+heur_raw <- read.csv("results/Evaluation_community_heuristics.csv")
 
 ## 4.2 Wrangle----
 heur <- heur_raw |> 
