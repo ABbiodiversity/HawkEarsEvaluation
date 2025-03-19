@@ -13,8 +13,7 @@
 library(tidyverse) # data manipulation and visualization
 
 ## 1.2 Read in detections and annotations file ----
-dat <- read.csv("data/community_minute.csv") |> 
-  unique()
+dat <- read.csv("data/community_minute.csv")
 
 ## 1.3 Load evaluation functions ----
 source("00_functions.R")

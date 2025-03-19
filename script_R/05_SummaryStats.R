@@ -12,8 +12,7 @@ library(tidyverse)
 
 ## 1.2 Get inputs ----
 annotations_community <- read.csv("data/annotations_community.csv")
-files_community <- read.csv("data/filelist_community.csv") |> 
-  unique()
+files_community <- read.csv("data/filelist_community.csv")
 minutes <- read.csv("results/Evaluation_community_recording.csv")
 dat <- read.csv("data/community_minute.csv")
 appendix <- read.csv("results/AppendixB.csv")

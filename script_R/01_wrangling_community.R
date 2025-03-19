@@ -17,7 +17,7 @@ library(tidyverse) # data manipulation and visualization
 setwd(dirname(getwd()))
 
 ## 1.3 Read in annotations ----
-ann <- read.csv(file.path("HawkEarsEvaluation", "data", "annotations.csv"))
+ann <- read.csv(file.path("HawkEarsEvaluation", "data", "annotations_community.csv"))
 
 # 2. Read in HawkEars output ----
 
@@ -105,7 +105,6 @@ minute3 <- minute2 |>
 ## 5.5 Separate annotations into one row per species ----
 ann_sp <- ann |>
   separate_rows(species, sep=",") |> 
-  select(-X) |> 
   mutate(detection = 1)
 
 ## 5.6 Get list of annotated minute intervals----
