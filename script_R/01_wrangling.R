@@ -1,8 +1,8 @@
 # ---
-# title: "01 wrangling for community dataset"
+# title: "01 data wrangling"
 # author: "Elly Knight"
 # date: "2025-03-17"
-# inputs: "community dataset annotations, output tags from HawkEars, BirdNET, Perch"
+# inputs: "community dataset annotations, output tags from HawkEars, BirdNET, Perch, vocal activity evaluation output from `script_python/vocal_activity_report.py`"
 # outputs: "dataset of classifier detections merged with human annotations"
 
 # ---
@@ -127,5 +127,30 @@ out <- full_join(minute3, ann_sp, multiple="all") |>
          minute_id = paste0(recording, "_", minute))
 
 write.csv(out, file.path("HawkEarsEvaluation", "data", "community_minute.csv"), row.names = FALSE)
+
+# 6. Wrangle vocal activity output ----
+
+## 6.1 Get list of files ----
+#change root path to the folder for the output of `vocal_activity_report.py`
+files_activity <- data.frame(file = list.files("vocalactivity", recursive=TRUE, pattern="precision_recall_table.csv"),
+                             path = list.files("vocalactivity", recursive=TRUE, pattern="precision_recall_table.csv", full.names = TRUE)) |> 
+  mutate(species = str_sub(file, 1, 4))
+
+## 6.2 Read in ----
+activity_out <- data.frame()
+for(i in 1:nrow(files_activity)){
+  
+  dat.i <- read.csv(files_activity$path[i])
+  
+  activity_out <- rbind(dat.i |> 
+                 mutate(species = files_activity$species,
+                        classifier = "HawkEars")  |> 
+                 dplyr::filter(threshold >= 0.1),
+                 activity_out)
+  
+}
+
+## 6.3 Save ----
+write.csv(activity_out, "results/Evaluation_vocalactivity.csv", row.names = FALSE)
 
 ## end script ##
