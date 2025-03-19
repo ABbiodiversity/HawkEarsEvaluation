@@ -49,5 +49,5 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# WT login
-WTlogin.R
+# py output
+vocalactivity/
