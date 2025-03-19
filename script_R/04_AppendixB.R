@@ -2,7 +2,7 @@
 # title: "04 species table for Appendix B for manuscript"
 # author: "Elly Knight"
 # date: "2025-03-18"
-# inputs: "evaluation output from `02_evaluate_community.R" and from python evaluation script in HawkEars repo for vocal activity dataset, training data records"
+# inputs: "evaluation output from `script_R/02_evaluate_community.R", from `script_python/vocal_activity_report.py`, and training data records"
 # outputs: "table for manuscript appendix"
 
 # 1. Setup ----
@@ -86,6 +86,6 @@ appendix_out <- train  |>
 colnames(appendix_out) <- c("Common name", "Species code", "Number of training clips", "Number of evaluation detections (minutes; community)", "Precision_universalthreshold (community)", "Recall _universalthreshold (community)", "F1score threshold (community)", "Precision_F1scorethreshold (community)", "Recall_F1scorethreshold (community)", "Classifier with highest F1score (community)", "Number of evaluation detections (calls; vocal activity)", "Precision_universalthreshold (vocal activity)", "Recall _universalthreshold (vocal activity)", "F1score threshold (vocal activity)", "Precision_F1scorethreshold (vocal activity)", "Recall_F1scorethreshold (vocal activity)")
 
 ## 4.3 Save----
-write.csv(appendix_out, "AppendixB.csv", row.names = FALSE)
+write.csv(appendix_out, "results/AppendixB.csv", row.names = FALSE)
 
 ## end script ##

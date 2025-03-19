@@ -2,7 +2,7 @@
 # title: "03 figures for manuscript"
 # author: "Elly Knight"
 # date: "2025-03-18"
-# inputs: "evaluation output from `02_evaluate_community.R" and from python evaluation script in HawkEars repo for vocal activity dataset and heuristics"
+# inputs: "communication evaluation output from `script_R/02_evaluate_community.R`, wrangled vocal activity output from `script_R/01_wrangle.R`, output from running HawkEars with different settings.
 # outputs: "figures for manuscript"
 
 # ---
@@ -57,8 +57,7 @@ ggsave("figures/Figure3.jpeg", width=9, height = 10, units="in")
 # 3. Figure 4 - Performance for vocal activity rate ----
 
 ## 3.1 Read in evaluation results ----
-activity_out <- read.csv("results/Evaluation_vocalactivity.csv") |> 
-  dplyr::filter(threshold >= 0.1)
+activity_out <- read.csv("results/Evaluation_vocalactivity.csv")
 
 ## 3.2 Make a dataframe of species names and codes ----
 species <- data.frame(species = sort(unique(activity_out$species)),

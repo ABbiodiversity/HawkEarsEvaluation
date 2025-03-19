@@ -38,12 +38,13 @@ dat |>
   nrow()
 
 ## 2.4 Range of detections ----
-summary(appendix$Number.of.training.clips)
+summary(appendix$Number.of.evaluation.detections..minutes..community.)
 
 # 3. Describe vocal activity dataset ----
 
 ## 3.1 Number of recordings ----
-files_activity <- list.files("annotations_vocalactivity", full.names = TRUE)
+files_activity <- list.files("data/annotations_vocalactivity", full.names = TRUE)
+
 map_dfr(read.csv, .x=files_activity) |> 
   dplyr::select(species, recording) |> 
   unique() |> 
