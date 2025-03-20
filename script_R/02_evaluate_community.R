@@ -16,7 +16,7 @@ library(tidyverse) # data manipulation and visualization
 dat <- read.csv("data/community_minute.csv")
 
 ## 1.3 Load evaluation functions ----
-source("00_functions.R")
+source("script_R/00_functions.R")
 
 ## 1.4 Set threshold sequence for evaluation ----
 threshold <- seq(0.01, 0.99, 0.01)
